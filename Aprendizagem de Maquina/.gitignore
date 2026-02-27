@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Dados
+data/*.csv
+data/*.txt
+data/*.zip
+!data/README.md
+
+# Modelos
+models/*.pkl
+models/*.h5
+models/*.pt
+!models/README.md
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
