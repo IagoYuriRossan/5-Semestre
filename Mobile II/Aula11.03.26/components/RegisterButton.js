@@ -18,14 +18,15 @@ export default function RegisterButton({ onPress, disabled }) {
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: '#2D6A4F',
+    backgroundColor: '#16A34A',
     borderRadius: 12,
     paddingVertical: 16,
     alignItems: 'center',
+    marginTop: 4,
     marginBottom: 24,
   },
   buttonDisabled: {
-    backgroundColor: '#E5E7EB',
+    backgroundColor: '#CBD5E1',
   },
   text: {
     color: '#FFFFFF',

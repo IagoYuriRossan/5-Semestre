@@ -50,10 +50,10 @@ const styles = StyleSheet.create({
     width: 7,
     height: 7,
     borderRadius: 3.5,
-    backgroundColor: '#1A1A2E',
+    backgroundColor: '#2563EB',
   },
   text: {
-    color: '#9CA3AF',
+    color: '#94A3B8',
     fontWeight: '500',
     fontSize: 13,
   },

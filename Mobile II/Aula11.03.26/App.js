@@ -7,12 +7,12 @@ const theme = {
   ...MD3LightTheme,
   colors: {
     ...MD3LightTheme.colors,
-    primary: '#1A1A2E',
-    secondary: '#6C6C80',
-    background: '#FAFAFA',
+    primary: '#2563EB',
+    secondary: '#6366F1',
+    background: '#F0F4F8',
     surface: '#FFFFFF',
-    onSurface: '#1A1A2E',
-    onSurfaceVariant: '#9CA3AF',
+    onSurface: '#1E293B',
+    onSurfaceVariant: '#94A3B8',
   },
 };
 

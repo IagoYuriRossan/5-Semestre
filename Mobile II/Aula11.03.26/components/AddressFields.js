@@ -1,30 +1,32 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { TextInput } from 'react-native-paper';
+import UfPicker from './UfPicker';
 
 const INPUT_THEME = {
   colors: {
-    primary: '#1A1A2E',
+    primary: '#2563EB',
     background: '#FFFFFF',
-    onSurface: '#1A1A2E',
-    onSurfaceVariant: '#9CA3AF',
-    outline: '#E5E7EB',
+    onSurface: '#1E293B',
+    onSurfaceVariant: '#94A3B8',
+    outline: '#CBD5E1',
     surfaceVariant: '#FFFFFF',
   },
 };
 
 function InfoBlock({ label, value, flex }) {
+  const filled = value && value.length > 0;
   return (
-    <View style={[styles.infoBlock, flex && { flex }]}>
+    <View style={[styles.infoBlock, flex && { flex }, filled && styles.infoBlockFilled]}>
       <Text style={styles.infoLabel}>{label}</Text>
-      <Text style={styles.infoValue} numberOfLines={1} ellipsizeMode="tail">
+      <Text style={[styles.infoValue, filled && styles.infoValueFilled]} numberOfLines={1} ellipsizeMode="tail">
         {value || '—'}
       </Text>
     </View>
   );
 }
 
-export default function AddressFields({ address, numero, onNumeroChange, complemento, onComplementoChange }) {
+export default function AddressFields({ address, uf, onUfChange, numero, onNumeroChange, complemento, onComplementoChange }) {
   return (
     <>
       <InfoBlock label="Logradouro" value={address.logradouro} />
@@ -33,7 +35,7 @@ export default function AddressFields({ address, numero, onNumeroChange, complem
       <View style={styles.row}>
         <InfoBlock label="Cidade" value={address.localidade} flex={2} />
         <View style={styles.gap} />
-        <InfoBlock label="UF" value={address.uf} flex={1} />
+        <UfPicker value={uf} onChange={onUfChange} />
       </View>
 
       <View style={[styles.row, styles.inputRow]}>
@@ -64,22 +66,31 @@ export default function AddressFields({ address, numero, onNumeroChange, complem
 
 const styles = StyleSheet.create({
   infoBlock: {
-    backgroundColor: '#F9FAFB',
+    backgroundColor: '#F8FAFC',
     borderRadius: 10,
+    borderLeftWidth: 3,
+    borderLeftColor: '#E2E8F0',
     paddingHorizontal: 14,
     paddingVertical: 12,
     marginBottom: 10,
   },
+  infoBlockFilled: {
+    backgroundColor: '#EFF6FF',
+    borderLeftColor: '#2563EB',
+  },
   infoLabel: {
     fontSize: 11,
     fontWeight: '500',
-    color: '#9CA3AF',
+    color: '#94A3B8',
     marginBottom: 3,
   },
   infoValue: {
     fontSize: 16,
-    color: '#1A1A2E',
+    color: '#94A3B8',
     fontWeight: '500',
+  },
+  infoValueFilled: {
+    color: '#1E293B',
   },
   row: {
     flexDirection: 'row',

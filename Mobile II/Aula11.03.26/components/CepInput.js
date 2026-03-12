@@ -4,11 +4,11 @@ import { TextInput } from 'react-native-paper';
 
 const INPUT_THEME = {
   colors: {
-    primary: '#1A1A2E',
+    primary: '#2563EB',
     background: '#FFFFFF',
-    onSurface: '#1A1A2E',
-    onSurfaceVariant: '#9CA3AF',
-    outline: '#E5E7EB',
+    onSurface: '#1E293B',
+    onSurfaceVariant: '#94A3B8',
+    outline: '#CBD5E1',
     surfaceVariant: '#FFFFFF',
   },
 };
@@ -56,18 +56,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   inputContent: {
-    color: '#1A1A2E',
+    color: '#1E293B',
     fontSize: 16,
   },
   button: {
-    backgroundColor: '#1A1A2E',
+    backgroundColor: '#2563EB',
     borderRadius: 12,
     paddingVertical: 15,
     alignItems: 'center',
     marginBottom: 4,
   },
   buttonDisabled: {
-    backgroundColor: '#E5E7EB',
+    backgroundColor: '#CBD5E1',
   },
   buttonText: {
     color: '#FFFFFF',

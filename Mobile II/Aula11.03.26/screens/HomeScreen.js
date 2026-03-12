@@ -11,13 +11,13 @@ const INITIAL_ADDRESS = {
   logradouro: '',
   bairro: '',
   localidade: '',
-  uf: '',
 };
 
 export default function HomeScreen() {
   const [cep, setCep] = useState('');
   const [numero, setNumero] = useState('');
   const [complemento, setComplemento] = useState('');
+  const [uf, setUf] = useState('');
   const [address, setAddress] = useState(INITIAL_ADDRESS);
   const [loading, setLoading] = useState(false);
   const [snackVisible, setSnackVisible] = useState(false);
@@ -42,6 +42,7 @@ export default function HomeScreen() {
     setCep('');
     setNumero('');
     setComplemento('');
+    setUf('');
     setAddress(INITIAL_ADDRESS);
   };
 
@@ -85,8 +86,8 @@ export default function HomeScreen() {
         logradouro: data.logradouro ?? '',
         bairro: data.bairro ?? '',
         localidade: data.localidade ?? '',
-        uf: data.uf ?? '',
       });
+      setUf(data.uf ?? '');
       setComplemento(data.complemento ?? '');
     } catch (error) {
       showSnack(error.message || 'Não foi possível buscar o CEP.');
@@ -98,7 +99,7 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.root}>
-      <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
+      <StatusBar backgroundColor="#1E3A5F" barStyle="light-content" />
 
       <TopAlert
         visible={snackVisible}
@@ -134,6 +135,8 @@ export default function HomeScreen() {
           <Text style={styles.sectionLabel}>Endereço</Text>
           <AddressFields
             address={address}
+            uf={uf}
+            onUfChange={setUf}
             numero={numero}
             onNumeroChange={setNumero}
             complemento={complemento}
@@ -155,47 +158,53 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#1E3A5F',
   },
   header: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#1E3A5F',
     paddingTop: 56,
-    paddingBottom: 20,
+    paddingBottom: 22,
     paddingHorizontal: 24,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
   },
   headerTitle: {
     fontSize: 28,
     fontWeight: '700',
-    color: '#1A1A2E',
+    color: '#FFFFFF',
     letterSpacing: -0.5,
   },
   headerSub: {
     fontSize: 13,
-    color: '#9CA3AF',
+    color: '#93B5D3',
     marginTop: 4,
   },
   scroll: {
     flexGrow: 1,
-    backgroundColor: '#FAFAFA',
-    paddingHorizontal: 24,
+    backgroundColor: '#F0F4F8',
+    paddingHorizontal: 20,
     paddingTop: 24,
     paddingBottom: 32,
   },
   section: {
-    marginBottom: 8,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 18,
+    marginBottom: 12,
+    elevation: 1,
+    shadowColor: '#94A3B8',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
   },
   sectionLabel: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#9CA3AF',
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#2563EB',
     marginBottom: 14,
-    letterSpacing: 0.3,
+    letterSpacing: 0.5,
+    textTransform: 'uppercase',
   },
   divider: {
-    height: 1,
-    backgroundColor: '#F0F0F0',
-    marginVertical: 20,
+    height: 0,
+    marginVertical: 2,
   },
 });
