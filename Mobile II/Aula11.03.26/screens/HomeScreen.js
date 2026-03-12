@@ -1,10 +1,5 @@
 import React, { useState } from 'react';
-import { ScrollView, StatusBar, StyleSheet, View } from 'react-native';
-import {
-  Card,
-  Divider,
-  Text,
-} from 'react-native-paper';
+import { ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
 
 import AddressFields from '../components/AddressFields';
 import CepInput from '../components/CepInput';
@@ -43,12 +38,20 @@ export default function HomeScreen() {
 
   const hasAddress = address.logradouro !== '' || address.localidade !== '';
 
+  const clearAll = () => {
+    setCep('');
+    setNumero('');
+    setComplemento('');
+    setAddress(INITIAL_ADDRESS);
+  };
+
   const handleRegister = () => {
     if (!hasAddress) {
       showSnack('Busque um CEP antes de cadastrar.');
       return;
     }
     showSuccess('✅ Endereço cadastrado com sucesso!');
+    clearAll();
   };
 
   const handleSearchCep = async () => {
@@ -56,8 +59,7 @@ export default function HomeScreen() {
 
     if (cleanCep.length !== 8) {
       showSnack('Digite um CEP válido com 8 dígitos.');
-      setAddress(INITIAL_ADDRESS);
-      setComplemento('');
+      clearAll();
       return;
     }
 
@@ -75,8 +77,7 @@ export default function HomeScreen() {
 
       if (data.erro) {
         showSnack('CEP não encontrado.');
-        setAddress(INITIAL_ADDRESS);
-        setComplemento('');
+        clearAll();
         return;
       }
 
@@ -89,8 +90,7 @@ export default function HomeScreen() {
       setComplemento(data.complemento ?? '');
     } catch (error) {
       showSnack(error.message || 'Não foi possível buscar o CEP.');
-      setAddress(INITIAL_ADDRESS);
-      setComplemento('');
+      clearAll();
     } finally {
       setLoading(false);
     }
@@ -98,7 +98,7 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.root}>
-      <StatusBar backgroundColor="#4F46E5" barStyle="light-content" />
+      <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
 
       <TopAlert
         visible={snackVisible}
@@ -108,48 +108,45 @@ export default function HomeScreen() {
       />
 
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>📍 Consulta de CEP</Text>
-        <Text style={styles.headerSubtitle}>Powered by ViaCEP</Text>
+        <Text style={styles.headerTitle}>Consulta de CEP</Text>
+        <Text style={styles.headerSub}>ViaCEP · busca de endereços</Text>
       </View>
 
       <ScrollView
-        contentContainerStyle={styles.container}
+        contentContainerStyle={styles.scroll}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        <Card style={styles.card} mode="elevated">
-          <Card.Content>
-            <Text style={styles.sectionLabel}>BUSCAR ENDEREÇO</Text>
+        <View style={styles.section}>
+          <Text style={styles.sectionLabel}>Buscar</Text>
+          <CepInput
+            value={cep}
+            onChangeText={setCep}
+            onSearch={handleSearchCep}
+            loading={loading}
+          />
+          <LoadingIndicator visible={loading} />
+        </View>
 
-            <CepInput
-              value={cep}
-              onChangeText={setCep}
-              onSearch={handleSearchCep}
-              loading={loading}
-            />
+        <View style={styles.divider} />
 
-            <LoadingIndicator visible={loading} />
+        <View style={styles.section}>
+          <Text style={styles.sectionLabel}>Endereço</Text>
+          <AddressFields
+            address={address}
+            numero={numero}
+            onNumeroChange={setNumero}
+            complemento={complemento}
+            onComplementoChange={setComplemento}
+          />
+        </View>
 
-            <Divider style={styles.divider} />
-            <Text style={styles.sectionLabel}>RESULTADO</Text>
+        <View style={styles.divider} />
 
-            <AddressFields
-              address={address}
-              numero={numero}
-              onNumeroChange={setNumero}
-              complemento={complemento}
-              onComplementoChange={setComplemento}
-            />
-
-            <Divider style={styles.divider} />
-
-            <RegisterButton
-              onPress={handleRegister}
-              disabled={!hasAddress || loading}
-            />
-          </Card.Content>
-        </Card>
-
+        <RegisterButton
+          onPress={handleRegister}
+          disabled={!hasAddress || loading}
+        />
       </ScrollView>
     </View>
   );
@@ -158,45 +155,47 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: '#4F46E5',
+    backgroundColor: '#FFFFFF',
   },
   header: {
-    backgroundColor: '#4F46E5',
-    paddingTop: 52,
-    paddingBottom: 28,
+    backgroundColor: '#FFFFFF',
+    paddingTop: 56,
+    paddingBottom: 20,
     paddingHorizontal: 24,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
   },
   headerTitle: {
-    fontSize: 26,
+    fontSize: 28,
     fontWeight: '700',
-    color: '#FFFFFF',
-    letterSpacing: 0.3,
+    color: '#1A1A2E',
+    letterSpacing: -0.5,
   },
-  headerSubtitle: {
+  headerSub: {
     fontSize: 13,
-    color: '#C7D2FE',
+    color: '#9CA3AF',
     marginTop: 4,
   },
-  container: {
+  scroll: {
     flexGrow: 1,
-    backgroundColor: '#F5F3FF',
-    padding: 16,
-    paddingTop: 20,
+    backgroundColor: '#FAFAFA',
+    paddingHorizontal: 24,
+    paddingTop: 24,
+    paddingBottom: 32,
   },
-  card: {
-    borderRadius: 20,
-    elevation: 4,
+  section: {
+    marginBottom: 8,
   },
   sectionLabel: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#6366F1',
-    letterSpacing: 1.2,
-    marginBottom: 12,
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#9CA3AF',
+    marginBottom: 14,
+    letterSpacing: 0.3,
   },
   divider: {
+    height: 1,
+    backgroundColor: '#F0F0F0',
     marginVertical: 20,
-    backgroundColor: '#E0E7FF',
-    height: 1.5,
   },
 });

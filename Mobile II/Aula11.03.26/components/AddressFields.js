@@ -1,51 +1,50 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { TextInput } from 'react-native-paper';
+
+const INPUT_THEME = {
+  colors: {
+    primary: '#1A1A2E',
+    background: '#FFFFFF',
+    onSurface: '#1A1A2E',
+    onSurfaceVariant: '#9CA3AF',
+    outline: '#E5E7EB',
+    surfaceVariant: '#FFFFFF',
+  },
+};
+
+function InfoBlock({ label, value, flex }) {
+  return (
+    <View style={[styles.infoBlock, flex && { flex }]}>
+      <Text style={styles.infoLabel}>{label}</Text>
+      <Text style={styles.infoValue} numberOfLines={1} ellipsizeMode="tail">
+        {value || '—'}
+      </Text>
+    </View>
+  );
+}
 
 export default function AddressFields({ address, numero, onNumeroChange, complemento, onComplementoChange }) {
   return (
     <>
-      <TextInput
-        label="Logradouro"
-        mode="outlined"
-        value={address.logradouro}
-        editable={false}
-        style={styles.input}
-        left={<TextInput.Icon icon="road" />}
-      />
-      <TextInput
-        label="Bairro"
-        mode="outlined"
-        value={address.bairro}
-        editable={false}
-        style={styles.input}
-        left={<TextInput.Icon icon="home-city" />}
-      />
+      <InfoBlock label="Logradouro" value={address.logradouro} />
+      <InfoBlock label="Bairro" value={address.bairro} />
+
       <View style={styles.row}>
-        <TextInput
-          label="Cidade"
-          mode="outlined"
-          value={address.localidade}
-          editable={false}
-          style={[styles.input, styles.flex2]}
-          left={<TextInput.Icon icon="city" />}
-        />
+        <InfoBlock label="Cidade" value={address.localidade} flex={2} />
         <View style={styles.gap} />
-        <TextInput
-          label="UF"
-          mode="outlined"
-          value={address.uf}
-          editable={false}
-          style={[styles.input, styles.flex1]}
-        />
+        <InfoBlock label="UF" value={address.uf} flex={1} />
       </View>
-      <View style={styles.row}>
+
+      <View style={[styles.row, styles.inputRow]}>
         <TextInput
           label="Número"
           mode="outlined"
           value={numero}
           onChangeText={onNumeroChange}
           style={[styles.input, styles.flex1]}
+          contentStyle={styles.inputContent}
+          theme={INPUT_THEME}
           keyboardType="number-pad"
         />
         <View style={styles.gap} />
@@ -55,7 +54,8 @@ export default function AddressFields({ address, numero, onNumeroChange, complem
           value={complemento}
           onChangeText={onComplementoChange}
           style={[styles.input, styles.flex2]}
-          left={<TextInput.Icon icon="text-box-outline" />}
+          contentStyle={styles.inputContent}
+          theme={INPUT_THEME}
         />
       </View>
     </>
@@ -63,13 +63,32 @@ export default function AddressFields({ address, numero, onNumeroChange, complem
 }
 
 const styles = StyleSheet.create({
-  input: {
-    marginBottom: 12,
-    backgroundColor: '#FFFFFF',
+  infoBlock: {
+    backgroundColor: '#F9FAFB',
+    borderRadius: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    marginBottom: 10,
+  },
+  infoLabel: {
+    fontSize: 11,
+    fontWeight: '500',
+    color: '#9CA3AF',
+    marginBottom: 3,
+  },
+  infoValue: {
+    fontSize: 16,
+    color: '#1A1A2E',
+    fontWeight: '500',
   },
   row: {
     flexDirection: 'row',
+  },
+  inputRow: {
     alignItems: 'flex-start',
+  },
+  gap: {
+    width: 10,
   },
   flex1: {
     flex: 1,
@@ -77,7 +96,11 @@ const styles = StyleSheet.create({
   flex2: {
     flex: 2,
   },
-  gap: {
-    width: 10,
+  input: {
+    marginBottom: 10,
+    backgroundColor: '#FFFFFF',
+  },
+  inputContent: {
+    color: '#1A1A2E',
   },
 });

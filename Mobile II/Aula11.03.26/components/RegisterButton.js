@@ -1,31 +1,38 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
-import { Button } from 'react-native-paper';
+import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 
 export default function RegisterButton({ onPress, disabled }) {
   return (
-    <Button
-      mode="contained"
+    <TouchableOpacity
       onPress={onPress}
       disabled={disabled}
-      icon="check-circle-outline"
-      style={styles.button}
-      contentStyle={styles.content}
-      buttonColor="#16A34A"
-      textColor="#FFFFFF"
+      activeOpacity={0.7}
+      style={[styles.button, disabled && styles.buttonDisabled]}
     >
-      Cadastrar Endereço
-    </Button>
+      <Text style={[styles.text, disabled && styles.textDisabled]}>
+        Cadastrar endereço
+      </Text>
+    </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
   button: {
-    marginTop: 8,
-    borderRadius: 14,
-    elevation: 3,
+    backgroundColor: '#2D6A4F',
+    borderRadius: 12,
+    paddingVertical: 16,
+    alignItems: 'center',
+    marginBottom: 24,
   },
-  content: {
-    height: 52,
+  buttonDisabled: {
+    backgroundColor: '#E5E7EB',
+  },
+  text: {
+    color: '#FFFFFF',
+    fontWeight: '600',
+    fontSize: 15,
+  },
+  textDisabled: {
+    color: '#9CA3AF',
   },
 });

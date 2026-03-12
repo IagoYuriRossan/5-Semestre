@@ -1,6 +1,17 @@
 import React, { useMemo } from 'react';
-import { StyleSheet } from 'react-native';
-import { Button, TextInput } from 'react-native-paper';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { TextInput } from 'react-native-paper';
+
+const INPUT_THEME = {
+  colors: {
+    primary: '#1A1A2E',
+    background: '#FFFFFF',
+    onSurface: '#1A1A2E',
+    onSurfaceVariant: '#9CA3AF',
+    outline: '#E5E7EB',
+    surfaceVariant: '#FFFFFF',
+  },
+};
 
 export default function CepInput({ value, onChangeText, onSearch, loading }) {
   const cepMask = useMemo(() => {
@@ -10,45 +21,60 @@ export default function CepInput({ value, onChangeText, onSearch, loading }) {
   }, [value]);
 
   return (
-    <>
+    <View>
       <TextInput
-        label="Digite o CEP"
+        label="CEP"
         mode="outlined"
         value={cepMask}
         onChangeText={onChangeText}
         keyboardType="number-pad"
         maxLength={9}
         style={styles.input}
-        left={<TextInput.Icon icon="map-marker" />}
+        contentStyle={styles.inputContent}
+        theme={INPUT_THEME}
         placeholder="00000-000"
+        placeholderTextColor="#D1D5DB"
       />
 
-      <Button
-        mode="contained"
+      <TouchableOpacity
         onPress={onSearch}
-        style={styles.button}
-        contentStyle={styles.buttonContent}
         disabled={loading}
-        icon="magnify"
+        style={[styles.button, loading && styles.buttonDisabled]}
+        activeOpacity={0.7}
       >
-        Buscar CEP
-      </Button>
-    </>
+        <Text style={[styles.buttonText, loading && styles.buttonTextDisabled]}>
+          Buscar CEP
+        </Text>
+      </TouchableOpacity>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   input: {
-    marginBottom: 12,
+    marginBottom: 14,
     backgroundColor: '#FFFFFF',
-    fontSize: 18,
+  },
+  inputContent: {
+    color: '#1A1A2E',
+    fontSize: 16,
   },
   button: {
+    backgroundColor: '#1A1A2E',
+    borderRadius: 12,
+    paddingVertical: 15,
+    alignItems: 'center',
     marginBottom: 4,
-    borderRadius: 14,
-    elevation: 3,
   },
-  buttonContent: {
-    height: 52,
+  buttonDisabled: {
+    backgroundColor: '#E5E7EB',
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontWeight: '600',
+    fontSize: 15,
+  },
+  buttonTextDisabled: {
+    color: '#9CA3AF',
   },
 });
