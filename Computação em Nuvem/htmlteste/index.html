@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cadastro de Produto</title>
+  <style>
+    body{font-family: Arial, Helvetica, sans-serif; background:#f6f8fa; padding:20px}
+    .container{max-width:600px;margin:40px auto;background:#fff;padding:20px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+    label{display:block;margin-top:12px;font-weight:600}
+    input[type=text], input[type=number], textarea, select{width:100%;padding:8px;margin-top:6px;border:1px solid #dcdfe6;border-radius:4px}
+    button{margin-top:16px;padding:10px 16px;border:0;background:#2563eb;color:#fff;border-radius:6px;cursor:pointer}
+    .preview{margin-top:12px}
+    .result{background:#f3f4f6;border:1px solid #e5e7eb;padding:10px;border-radius:6px;margin-top:12px;font-family:monospace}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Cadastro de Produto</h2>
+    <form id="productForm">
+      <label for="name">Nome do produto</label>
+      <input type="text" id="name" name="name" required>
+
+      <label for="description">Descrição</label>
+      <textarea id="description" name="description" rows="4"></textarea>
+
+      <label for="price">Preço (R$)</label>
+      <input type="number" id="price" name="price" min="0" step="0.01" required>
+
+      <label for="quantity">Quantidade</label>
+      <input type="number" id="quantity" name="quantity" min="0" step="1" value="1">
+
+      <label for="category">Categoria</label>
+      <select id="category" name="category">
+        <option value="">-- selecione --</option>
+        <option>Eletrônicos</option>
+        <option>Roupas</option>
+        <option>Alimentos</option>
+        <option>Beleza</option>
+      </select>
+
+      <label for="image">URL da imagem (opcional)</label>
+      <input type="text" id="image" name="image" placeholder="https://...">
+
+      <button type="submit">Cadastrar</button>
+    </form>
+
+    <div class="preview" id="preview"></div>
+    <div class="result" id="result" style="display:none"></div>
+  </div>
+
+  <script>
+    const form = document.getElementById('productForm');
+    const preview = document.getElementById('preview');
+    const result = document.getElementById('result');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const data = {
+        name: form.name.value.trim(),
+        description: form.description.value.trim(),
+        price: parseFloat(form.price.value) || 0,
+        quantity: parseInt(form.quantity.value) || 0,
+        category: form.category.value,
+        image: form.image.value.trim()
+      };
+
+      // Exibe visualização simples
+      preview.innerHTML = '';
+      if (data.image) {
+        const img = document.createElement('img');
+        img.src = data.image;
+        img.alt = data.name;
+        img.style.maxWidth = '100%';
+        preview.appendChild(img);
+      }
+
+      // Mostra JSON do produto cadastrado
+      result.style.display = 'block';
+      result.textContent = JSON.stringify(data, null, 2);
+
+      // Exemplo: salvar em localStorage (opcional)
+      const saved = JSON.parse(localStorage.getItem('produtos') || '[]');
+      saved.push(data);
+      localStorage.setItem('produtos', JSON.stringify(saved));
+
+      // Limpar formulário (opcional)
+      form.reset();
+    });
+  </script>
+</body>
+</html>
