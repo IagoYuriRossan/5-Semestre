@@ -66,7 +66,7 @@ async function selectUsuarioId(db:SQLite.SQLiteDatabase, id:number) {
 async function deletarUsuario(db:SQLite.SQLiteDatabase, id:number) {
   try {
     await db.runAsync("DELETE FROM USUARIO WHERE ID_US = ?", id);
-    console
+    console.log("Usuário deletado com sucesso");
   } catch (error) {
     console.log("Erro ao deletar usuário", error);
   }
