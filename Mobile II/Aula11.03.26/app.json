@@ -1,0 +1,19 @@
+{
+  "expo": {
+    "name": "Busca CEP ViaCEP",
+    "slug": "busca-cep-via-cep",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#f2f5f7"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "android": {
+      "package": "com.anonymous.buscacepviacep"
+    }
+  }
+}
