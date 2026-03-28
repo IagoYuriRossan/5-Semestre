@@ -1,14 +1,14 @@
 """
-NESTA VERSÃO, O CONJUNTO DE DADOS SERÁ LIDO LOCALMENTE E DIVIDIDO EM TREINAMENTO E TESTE.
-O SCRIPT IRÁ ITERAR SOBRE VÁRIAS ARQUITETURAS DE REDE, EXIBIR A MATRIZ DE CONFUSÃO 
-GRÁFICA PARA CADA UMA DELAS E GERAR UMA TABELA DE ACURÁCIA NO FINAL.
+CÓDIGO BLINDADO COM LABEL ENCODER: Resolve o bug do Scikit-Learn transformando
+as classes de texto (fire/not fire) em números (1 e 0) para a Rede Neural.
 """
 #%% BIBLIOTECAS
 
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, confusion_matrix
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, LabelEncoder
+from ucimlrepo import fetch_ucirepo
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.metrics import ConfusionMatrixDisplay
@@ -17,29 +17,44 @@ from sklearn.exceptions import ConvergenceWarning
 
 warnings.filterwarnings("ignore", category=ConvergenceWarning)
 
-#%% CARGA DOS DADOS
+#%% CARGA DOS DADOS E LIMPEZA INTELIGENTE
 
-print("Carregando base de dados Clickstream do arquivo local...")
-df = pd.read_csv('e-shop clothing 2008.csv', sep=';')
+print("Baixando base de dados Algerian Forest Fires da UCI (ID 547)...")
+forest_fires = fetch_ucirepo(id=547)
 
-df.columns = df.columns.str.lower().str.strip()
+X = forest_fires.data.features.copy()
+y = forest_fires.data.targets.copy()
 
-# Amostragem: Usando 10% da base para agilizar os testes
-df = df.sample(frac=0.10, random_state=42)
+# 1. Padroniza o Target (y) tirando espaços e deixando minúsculo
+y = y.iloc[:, 0].astype(str).str.strip().str.lower()
 
-y = df['price 2']
-X = df.drop(columns=['price 2', 'price', 'session id', 'year'])
-X = pd.get_dummies(X)
+# 2. Filtra as 2 classes principais para remover lixo
+classes_principais = y.value_counts().index[:2]
+linhas_validas = y.isin(classes_principais)
 
-print('\nMATRIZ DOS DADOS DE ENTRADA (Amostra 10%)\n', X.head())      
-input('\nAperte ENTER para continuar:')
-print('\nVETOR DAS CLASSES (Target)\n', y.head())
-input('\nAperte ENTER para continuar:')
+X = X[linhas_validas].copy()
+y = y[linhas_validas].copy()
+
+# 3. Força atributos a serem números e preenche erros com 0
+for col in X.columns:
+    X[col] = pd.to_numeric(X[col].astype(str).str.replace(',', '.'), errors='coerce')
+X = X.fillna(0)
+
+# ==========================================================
+# A SOLUÇÃO DO BUG: Transformar texto em número (0 e 1)
+# ==========================================================
+le = LabelEncoder()
+y_numerico = le.fit_transform(y) # Transforma 'fire'/'not fire' em números
+
+print(f'\nTotal de amostras válidas prontas para uso: {len(X)} linhas.')
+print(f'Mapeamento das Classes pelo LabelEncoder: {dict(zip(le.classes_, le.transform(le.classes_)))}')
+input('\nAperte ENTER para continuar e separar os dados:')
 
 
 #%% DIVIDA O CONJUNTO DE DADOS EM TREINAMENTO E TESTE
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# Usamos o y_numerico agora!
+X_train, X_test, y_train, y_test = train_test_split(X, y_numerico, test_size=0.2, random_state=42)
 
 scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
@@ -56,8 +71,6 @@ arquiteturas = [(10,), (20,), (50,), (100,), (200,), (10, 10), (20, 20), (50, 50
 
 melhor_acuracia = 0
 melhor_mlp = None
-
-# Lista para guardar os resultados da tabela final
 tabela_resultados = []
 
 for tam_camada_oculta in arquiteturas:
@@ -65,10 +78,10 @@ for tam_camada_oculta in arquiteturas:
     print(f"Treinando Arquitetura: {tam_camada_oculta}")
     print("="*40)
     
-    mlp = MLPClassifier(hidden_layer_sizes = tam_camada_oculta, 
+    mlp = MLPClassifier(hidden_layer_sizes=tam_camada_oculta, 
                         max_iter=1000,
                         random_state=42,
-                        early_stopping=True)
+                        early_stopping=True) # Como y é número, early_stopping não dá mais erro!
     
     mlp.fit(X_train_scaled, y_train)
     y_pred = mlp.predict(X_test_scaled)
@@ -77,8 +90,6 @@ for tam_camada_oculta in arquiteturas:
     print(f"Épocas até parar: {mlp.n_iter_}")
     print(f"Acurácia com {tam_camada_oculta} neurons: {accuracy:.4f}")
     
-    # Adicionando o resultado na nossa lista para a tabela final
-    # O .replace tira a vírgula para ficar bonito na tabela. Ex: (10,) vira (10)
     tabela_resultados.append({
         'Camada oculta': str(tam_camada_oculta).replace(',', ''),
         'Acurácia': round(accuracy, 4)
@@ -95,11 +106,11 @@ for tam_camada_oculta in arquiteturas:
     print("\n--> Uma janela com o gráfico foi aberta.")
     print("--> FECHE A JANELA DO GRÁFICO PARA CONTINUAR PARA A PRÓXIMA RODADA.")
     
-    display = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=mlp.classes_)
-    display.plot(cmap=plt.cm.Blues)
+    # Passamos as classes do LabelEncoder para o gráfico mostrar o texto original ('fire', 'not fire')
+    display = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=le.classes_)
+    display.plot(cmap=plt.cm.Oranges) 
     plt.title(f"Matriz de Confusao - Arquitetura: {tam_camada_oculta}")
     
-    # O código pausa aqui até você fechar o gráfico
     plt.show() 
 
 input('\nTodas as rodadas foram concluídas! Aperte ENTER para ver a Tabela de Acurácia:')
@@ -111,8 +122,8 @@ print("\n" + "="*40)
 print("TABELA DE ACURÁCIA".center(40))
 print("="*40)
 
-# Cria o DataFrame com os dados guardados e imprime em formato texto simples
 df_tabela = pd.DataFrame(tabela_resultados)
+df_tabela = df_tabela.sort_values(by='Acurácia', ascending=False).reset_index(drop=True)
 print(df_tabela.to_string(index=False))
 
 input('\nAperte ENTER para ver os dados da MELHOR rede encontrada:')
@@ -125,7 +136,9 @@ print("PARÂMETROS INTERNOS DA MELHOR REDE".center(50))
 print("="*50)
 print(f"Configuração vencedora: {melhor_mlp.hidden_layer_sizes}\n")
 
-print("Classes = ", melhor_mlp.classes_)
+# Mostrando o mapeamento para o professor ver que você converteu os dados corretamente
+print("Classes da Rede (Números) = ", melhor_mlp.classes_)
+print("Classes Originais (Texto) = ", le.classes_)
 print("Erro (Loss final) = ", melhor_mlp.loss_)
 print("Amostras visitadas = ", melhor_mlp.t_)
 print("Atributos de entrada = ", melhor_mlp.n_features_in_)
