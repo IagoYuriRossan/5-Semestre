@@ -18,10 +18,10 @@ export default function App() {
       //await deletarUsuario(rbd, 4);
       
       const camposId = await selectUsuarioId(rbd, 3) as { ID_US:number, NOME_US:string, EMAIL_US:string} | null;
-      if (!camposId) {
-        console.log('Usuário com ID 3 não encontrado');
-      } else {
+      if (camposId) {
         console.log(camposId.ID_US, camposId.NOME_US, camposId.EMAIL_US);
+      } else {
+        console.log('Usuário não encontrado');
       }
       console.log("-----------------------------------------");
       
