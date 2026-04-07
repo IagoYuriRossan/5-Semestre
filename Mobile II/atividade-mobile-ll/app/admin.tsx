@@ -23,6 +23,8 @@ import {
     salvarUsuario
 } from '../src/utils/storageService';
 
+const AVATAR_COLORS = ['#667EEA', '#764BA2', '#00C48C', '#FF6584', '#FFB946', '#00D2FF'];
+
 const UFS = [
   'AC','AL','AP','AM','BA','CE','DF','ES','GO','MA',
   'MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN',
@@ -90,39 +92,62 @@ function TelaLogin() {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <View style={styles.loginCard}>
-        <Text style={styles.loginIcone}>🔐</Text>
+        <View style={styles.loginIconeWrapper}>
+          <LinearGradient
+            colors={['#667EEA', '#764BA2']}
+            style={styles.loginIconeGradient}
+          >
+            <Ionicons name="shield-checkmark" size={32} color="#fff" />
+          </LinearGradient>
+        </View>
         <Text style={styles.loginTitulo}>Acesso Administrativo</Text>
         <Text style={styles.loginSubtitulo}>Faça login para gerenciar usuários</Text>
 
-        <TextInput
-          style={styles.input}
-          placeholder="Usuário"
-          placeholderTextColor="#aaa"
-          value={usuario}
-          onChangeText={(v) => { setUsuario(v); setErro(''); }}
-          autoCapitalize="none"
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Senha"
-          placeholderTextColor="#aaa"
-          value={senha}
-          onChangeText={(v) => { setSenha(v); setErro(''); }}
-          secureTextEntry
-        />
+        <View style={styles.inputComIcone}>
+          <Ionicons name="person-outline" size={20} color="#A8AEBF" style={{ marginRight: 12 }} />
+          <TextInput
+            style={styles.inputIconeTexto}
+            placeholder="Usuário"
+            placeholderTextColor="#A8AEBF"
+            value={usuario}
+            onChangeText={(v) => { setUsuario(v); setErro(''); }}
+            autoCapitalize="none"
+          />
+        </View>
+        <View style={styles.inputComIcone}>
+          <Ionicons name="lock-closed-outline" size={20} color="#A8AEBF" style={{ marginRight: 12 }} />
+          <TextInput
+            style={styles.inputIconeTexto}
+            placeholder="Senha"
+            placeholderTextColor="#A8AEBF"
+            value={senha}
+            onChangeText={(v) => { setSenha(v); setErro(''); }}
+            secureTextEntry
+          />
+        </View>
 
         {erro ? <Text style={styles.erroTexto}>{erro}</Text> : null}
 
         <TouchableOpacity
-          style={[styles.botaoPrimario, { width: '100%' }, carregando && styles.botaoDesabilitado]}
           onPress={handleLogin}
           disabled={carregando}
+          style={{ width: '100%' }}
         >
-          {carregando ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text style={styles.botaoTexto}>Entrar</Text>
-          )}
+          <LinearGradient
+            colors={['#667EEA', '#764BA2']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={[styles.botaoPrimario, carregando && styles.botaoDesabilitado]}
+          >
+            {carregando ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <>
+                <Ionicons name="log-in-outline" size={20} color="#fff" style={{ marginRight: 8 }} />
+                <Text style={styles.botaoTexto}>Entrar</Text>
+              </>
+            )}
+          </LinearGradient>
         </TouchableOpacity>
 
         <Text style={styles.dica}>Credenciais: admin / admin123</Text>
@@ -283,23 +308,34 @@ function PainelAdmin() {
     );
   };
 
-  const renderItem = ({ item }: { item: Usuario }) => (
+  const renderItem = ({ item, index }: { item: Usuario; index: number }) => (
     <View style={styles.card}>
-      <View style={styles.cardAvatar}>
+      <View style={[styles.cardAvatar, { backgroundColor: AVATAR_COLORS[index % AVATAR_COLORS.length] }]}>
         <Text style={styles.cardAvatarLetra}>{item.nome.charAt(0).toUpperCase()}</Text>
       </View>
       <View style={styles.cardInfo}>
         <Text style={styles.cardNome}>{item.nome}</Text>
-        <Text style={styles.cardEmail}>{item.email}</Text>
-        {item.telefone ? <Text style={styles.cardTelefone}>{item.telefone}</Text> : null}
-        <Text style={styles.cardData}>Cadastro: {item.dataCadastro}</Text>
+        <View style={styles.cardRow}>
+          <Ionicons name="mail-outline" size={12} color="#6B7194" />
+          <Text style={styles.cardEmail}>{item.email}</Text>
+        </View>
+        {item.telefone ? (
+          <View style={styles.cardRow}>
+            <Ionicons name="call-outline" size={11} color="#6B7194" />
+            <Text style={styles.cardTelefone}>{item.telefone}</Text>
+          </View>
+        ) : null}
+        <View style={styles.cardRow}>
+          <Ionicons name="calendar-outline" size={11} color="#A8AEBF" />
+          <Text style={styles.cardData}>{item.dataCadastro}</Text>
+        </View>
       </View>
       <View style={styles.cardAcoes}>
         <TouchableOpacity style={styles.btnEditar} onPress={() => abrirModalEditar(item)}>
-          <Text style={styles.btnAcaoTexto}>✏️</Text>
+          <Ionicons name="create-outline" size={18} color="#667EEA" />
         </TouchableOpacity>
         <TouchableOpacity style={styles.btnDeletar} onPress={() => handleDeletar(item)}>
-          <Text style={styles.btnAcaoTexto}>🗑️</Text>
+          <Ionicons name="trash-outline" size={18} color="#FF6584" />
         </TouchableOpacity>
       </View>
     </View>
@@ -311,33 +347,44 @@ function PainelAdmin() {
       <View style={styles.painelHeader}>
         <Text style={styles.painelContagem}>{usuarios.length} usuário(s)</Text>
         <TouchableOpacity style={styles.btnLogout} onPress={logoutAdmin}>
+          <Ionicons name="log-out-outline" size={16} color="#6B7194" style={{ marginRight: 4 }} />
           <Text style={styles.btnLogoutTexto}>Sair</Text>
         </TouchableOpacity>
       </View>
 
       {/* Botão novo usuário */}
-      <TouchableOpacity style={styles.btnNovo} onPress={abrirModalNovo}>
-        <Text style={styles.botaoTexto}>+ Novo Usuário</Text>
+      <TouchableOpacity onPress={abrirModalNovo}>
+        <LinearGradient
+          colors={['#00C48C', '#00A878']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.btnNovo}
+        >
+          <Ionicons name="person-add" size={18} color="#fff" style={{ marginRight: 8 }} />
+          <Text style={styles.botaoTexto}>Novo Usuário</Text>
+        </LinearGradient>
       </TouchableOpacity>
 
       {/* Botão popular dados de exemplo */}
       <TouchableOpacity style={styles.btnPopular} onPress={handlePopularDados}>
-        <Text style={styles.btnPopularTexto}>🗄️ Popular com dados de exemplo</Text>
+        <Ionicons name="server-outline" size={16} color="#667EEA" style={{ marginRight: 6 }} />
+        <Text style={styles.btnPopularTexto}>Popular com dados de exemplo</Text>
       </TouchableOpacity>
 
       {/* Busca */}
       <View style={styles.buscaContainer}>
+        <Ionicons name="search-outline" size={18} color="#A8AEBF" style={{ marginRight: 8 }} />
         <TextInput
           style={styles.buscaInput}
           placeholder="Buscar por nome ou ID..."
-          placeholderTextColor="#aaa"
+          placeholderTextColor="#A8AEBF"
           value={busca}
           onChangeText={setBusca}
           clearButtonMode="while-editing"
         />
         {busca.trim() ? (
           <TouchableOpacity onPress={() => setBusca('')} style={styles.buscaLimpar}>
-            <Text style={styles.buscaLimparTexto}>✕</Text>
+            <Ionicons name="close-circle" size={20} color="#A8AEBF" />
           </TouchableOpacity>
         ) : null}
       </View>
@@ -352,15 +399,15 @@ function PainelAdmin() {
         }
         ListEmptyComponent={
           carregando ? (
-            <ActivityIndicator size="large" color="#6C5CE7" style={{ marginTop: 40 }} />
+            <ActivityIndicator size="large" color="#667EEA" style={{ marginTop: 40 }} />
           ) : busca.trim() ? (
             <View style={styles.vazioContainer}>
-              <Text style={styles.vazioIcone}>🔍</Text>
+              <Ionicons name="search-outline" size={56} color="#E2E5F1" />
               <Text style={styles.vazioTexto}>Nenhum resultado para "{busca}".</Text>
             </View>
           ) : (
             <View style={styles.vazioContainer}>
-              <Text style={styles.vazioIcone}>👤</Text>
+              <Ionicons name="people-outline" size={56} color="#E2E5F1" />
               <Text style={styles.vazioTexto}>Nenhum usuário cadastrado.</Text>
             </View>
           )
@@ -378,7 +425,7 @@ function PainelAdmin() {
           >
             <View style={styles.modalCard}>
               <Text style={styles.modalTitulo}>
-                {editando ? '✏️ Editar Usuário' : '➕ Novo Usuário'}
+                {editando ? 'Editar Usuário' : 'Novo Usuário'}
               </Text>
 
               <ScrollView showsVerticalScrollIndicator={false}>
@@ -437,14 +484,20 @@ function PainelAdmin() {
                     maxLength={9}
                   />
                   <TouchableOpacity
-                    style={[styles.btnBuscar, buscandoCep && styles.botaoDesabilitado]}
                     onPress={handleBuscarCep}
                     disabled={buscandoCep}
                   >
-                    {buscandoCep
-                      ? <ActivityIndicator color="#fff" size="small" />
-                      : <Text style={styles.btnBuscarTexto}>Buscar</Text>
-                    }
+                    <LinearGradient
+                      colors={['#667EEA', '#764BA2']}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 0 }}
+                      style={[styles.btnBuscar, buscandoCep && styles.botaoDesabilitado]}
+                    >
+                      {buscandoCep
+                        ? <ActivityIndicator color="#fff" size="small" />
+                        : <Text style={styles.btnBuscarTexto}>Buscar</Text>
+                      }
+                    </LinearGradient>
                   </TouchableOpacity>
                 </View>
 
@@ -501,8 +554,16 @@ function PainelAdmin() {
                 <TouchableOpacity style={[styles.btnCancelar, { flex: 1 }]} onPress={fecharModal}>
                   <Text style={styles.btnCancelarTexto}>Cancelar</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.botaoPrimario, { flex: 1 }]} onPress={handleSalvar}>
-                  <Text style={styles.botaoTexto}>Salvar</Text>
+                <TouchableOpacity onPress={handleSalvar} style={{ flex: 1 }}>
+                  <LinearGradient
+                    colors={['#667EEA', '#764BA2']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                    style={styles.botaoPrimario}
+                  >
+                    <Ionicons name="checkmark-circle" size={18} color="#fff" style={{ marginRight: 6 }} />
+                    <Text style={styles.botaoTexto}>Salvar</Text>
+                  </LinearGradient>
                 </TouchableOpacity>
               </View>
             </View>
