@@ -1,4 +1,6 @@
+import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
+import { LinearGradient } from 'expo-linear-gradient';
 import React, { useCallback, useState } from 'react';
 import {
     ActivityIndicator,
@@ -286,28 +288,6 @@ function PainelAdmin() {
     );
   };
 
-  const handlePopularDados = () => {
-    Alert.alert(
-      'Popular banco de dados',
-      'Isso irá inserir 6 usuários de exemplo. Deseja continuar?',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Inserir',
-          onPress: async () => {
-            try {
-              await popularBancoDados();
-              carregarUsuarios();
-              Alert.alert('Sucesso', '6 usuários de exemplo inseridos!');
-            } catch {
-              Alert.alert('Erro', 'Não foi possível popular o banco.');
-            }
-          },
-        },
-      ]
-    );
-  };
-
   const renderItem = ({ item, index }: { item: Usuario; index: number }) => (
     <View style={styles.card}>
       <View style={[styles.cardAvatar, { backgroundColor: AVATAR_COLORS[index % AVATAR_COLORS.length] }]}>
@@ -363,12 +343,6 @@ function PainelAdmin() {
           <Ionicons name="person-add" size={18} color="#fff" style={{ marginRight: 8 }} />
           <Text style={styles.botaoTexto}>Novo Usuário</Text>
         </LinearGradient>
-      </TouchableOpacity>
-
-      {/* Botão popular dados de exemplo */}
-      <TouchableOpacity style={styles.btnPopular} onPress={handlePopularDados}>
-        <Ionicons name="server-outline" size={16} color="#667EEA" style={{ marginRight: 6 }} />
-        <Text style={styles.btnPopularTexto}>Popular com dados de exemplo</Text>
       </TouchableOpacity>
 
       {/* Busca */}
@@ -661,6 +635,23 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#B2BEC3',
   },
+  inputComIcone: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F8F9FD',
+    borderWidth: 1.5,
+    borderColor: '#E2E5F1',
+    borderRadius: 14,
+    paddingHorizontal: 16,
+    paddingVertical: 4,
+    width: '100%',
+  },
+  inputIconeTexto: {
+    flex: 1,
+    fontSize: 15,
+    color: '#1A1D3B',
+    paddingVertical: 12,
+  },
   // Painel
   painelContainer: {
     flex: 1,
@@ -725,20 +716,6 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 3 },
     elevation: 3,
-  },
-  btnPopular: {
-    marginHorizontal: 16,
-    marginBottom: 6,
-    borderRadius: 12,
-    paddingVertical: 11,
-    alignItems: 'center',
-    borderWidth: 1.5,
-    borderColor: '#6C5CE7',
-  },
-  btnPopularTexto: {
-    color: '#6C5CE7',
-    fontSize: 13,
-    fontWeight: '600',
   },
   // Card
   card: {

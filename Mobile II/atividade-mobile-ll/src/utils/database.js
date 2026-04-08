@@ -24,7 +24,6 @@ export const getDatabase = async () => {
 
   await db.execAsync('PRAGMA journal_mode = WAL;');
 
-  // Recria a tabela com AUTOINCREMENT se ainda usar o esquema antigo (id TEXT)
   const info = await db.getFirstAsync(
     `SELECT sql FROM sqlite_master WHERE type='table' AND name='usuarios'`
   );
@@ -49,7 +48,7 @@ export const getDatabase = async () => {
     );
   `);
 
-  // Insere usuários base que ainda não existem no banco
+  
   const dataCadastro = new Date().toLocaleDateString('pt-BR');
   for (const u of SEED_USUARIOS) {
     const existe = await db.getFirstAsync('SELECT id FROM usuarios WHERE email = ?', [u.email]);

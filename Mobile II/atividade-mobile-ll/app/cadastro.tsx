@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
 import {
     ActivityIndicator,
@@ -22,6 +23,11 @@ const UFS = [
 ];
 
 export default function CadastroScreen() {
+
+  const Gradient = typeof LinearGradient !== 'undefined' && LinearGradient
+    ? LinearGradient
+    : ({ children, style }: any) => <View style={style}>{children}</View>;
+
   // Dados pessoais
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
@@ -85,11 +91,6 @@ export default function CadastroScreen() {
       Alert.alert('Atenção', 'A senha deve ter pelo menos 6 caracteres.');
       return;
     }
-    if (cep.trim() && !cepEncontrado) {
-      Alert.alert('Atenção', 'Clique em "Buscar" para pesquisar o endereço pelo CEP antes de salvar.');
-      return;
-    }
-
     setCarregando(true);
     try {
       await salvarUsuario({ nome, email, senha, telefone, cep, rua, numero, bairro, cidade, uf });
@@ -196,7 +197,7 @@ export default function CadastroScreen() {
                 placeholder="Ex.: 01310-100"
                 placeholderTextColor="#aaa"
                 value={cep}
-                onChangeText={(v) => { setCep(v); if (cepEncontrado) limparEndereco(); }}
+                onChangeText={(v) => { setCep(v); if (cepEncontrado && v !== cep) limparEndereco(); }}
                 keyboardType="numeric"
                 maxLength={9}
                 editable={!carregando && !buscandoCep}
@@ -205,7 +206,7 @@ export default function CadastroScreen() {
                 onPress={handleBuscarCep}
                 disabled={buscandoCep || carregando}
               >
-                <LinearGradient
+                <Gradient
                   colors={['#667EEA', '#764BA2']}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
@@ -215,7 +216,7 @@ export default function CadastroScreen() {
                     ? <ActivityIndicator color="#fff" size="small" />
                     : <Text style={styles.btnBuscarTexto}>Buscar</Text>
                   }
-                </LinearGradient>
+                </Gradient>
               </TouchableOpacity>
             </View>
           </View>
@@ -224,33 +225,36 @@ export default function CadastroScreen() {
           <View style={styles.grupo}>
             <Text style={styles.label}>Rua / Logradouro</Text>
             <TextInput
-              style={[styles.input, styles.inputReadOnly]}
+              style={styles.input}
               placeholder="Preenchido ao buscar o CEP"
-              placeholderTextColor="#bbb"
+              placeholderTextColor="#aaa"
               value={rua}
-              editable={false}
+              onChangeText={setRua}
+              editable={!carregando && !buscandoCep}
             />
           </View>
 
           <View style={styles.grupo}>
             <Text style={styles.label}>Bairro</Text>
             <TextInput
-              style={[styles.input, styles.inputReadOnly]}
+              style={styles.input}
               placeholder="Preenchido ao buscar o CEP"
-              placeholderTextColor="#bbb"
+              placeholderTextColor="#aaa"
               value={bairro}
-              editable={false}
+              onChangeText={setBairro}
+              editable={!carregando && !buscandoCep}
             />
           </View>
 
           <View style={styles.grupo}>
             <Text style={styles.label}>Cidade</Text>
             <TextInput
-              style={[styles.input, styles.inputReadOnly]}
+              style={styles.input}
               placeholder="Preenchida ao buscar o CEP"
-              placeholderTextColor="#bbb"
+              placeholderTextColor="#aaa"
               value={cidade}
-              editable={false}
+              onChangeText={setCidade}
+              editable={!carregando && !buscandoCep}
             />
           </View>
 
@@ -260,7 +264,7 @@ export default function CadastroScreen() {
             <TouchableOpacity
               style={[styles.input, styles.seletor]}
               onPress={() => setModalUfVisivel(true)}
-              disabled={carregando}
+              disabled={carregando || buscandoCep}
             >
               <Text style={uf ? styles.seletorTexto : styles.seletorPlaceholder}>
                 {uf || 'Selecione a UF'}
@@ -288,7 +292,7 @@ export default function CadastroScreen() {
             disabled={carregando}
             style={{ marginTop: 18 }}
           >
-            <LinearGradient
+            <Gradient
               colors={['#667EEA', '#764BA2']}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
@@ -301,7 +305,7 @@ export default function CadastroScreen() {
                     <Text style={styles.botaoTexto}>Criar conta</Text>
                   </>
               }
-            </LinearGradient>
+            </Gradient>
           </TouchableOpacity>
         </View>
       </ScrollView>
