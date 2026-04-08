@@ -1,32 +1,32 @@
 // Paleta moderna — dark accent com gradientes e contraste vibrante
 export const Colors = {
-  // Gradiente principal (header, botões hero)
-  gradientStart: '#667EEA',   // azul-roxo
-  gradientEnd: '#764BA2',     // roxo
+  // Gradiente principal (tons de verde)
+  gradientStart: '#2F855A', // verde médio
+  gradientEnd: '#22543D',   // verde escuro
 
-  primary: '#667EEA',
-  primaryLight: '#8B9CF7',
-  primaryDark: '#5A6FD6',
-  accent: '#00D2FF',          // ciano vibrante
-  success: '#00C48C',         // verde esmeralda
-  successDark: '#00A878',
-  danger: '#FF6584',          // rosa-vermelho
-  dangerLight: '#FFF0F3',
-  warning: '#FFB946',
+  primary: '#2F855A',
+  primaryLight: '#68D391',
+  primaryDark: '#276749',
+  accent: '#9AE6B4',        // verde claro destacável
+  success: '#38A169',
+  successDark: '#2F855A',
+  danger: '#E53E3E',
+  dangerLight: '#FFF5F5',
+  warning: '#D69E2E',
 
-  bg: '#F5F7FF',              // fundo levemente azulado
+  bg: '#F3FFF7',            // fundo levemente esverdeado
   card: '#FFFFFF',
-  surface: '#EEF0F8',         // inputs e superfícies
-  border: '#E2E5F1',
-  borderFocus: '#667EEA',
+  surface: '#EDFDF3',       // inputs e superfícies
+  border: '#DFF5E8',
+  borderFocus: '#2F855A',
 
-  text: '#1A1D3B',            // quase-preto azulado
-  textSecondary: '#6B7194',
-  textMuted: '#A8AEBF',
+  text: '#0B3B2E',          // quase-preto com matiz verde
+  textSecondary: '#356859',
+  textMuted: '#6C8D7B',
   textOnPrimary: '#FFFFFF',
 
-  avatarColors: ['#667EEA', '#764BA2', '#00C48C', '#FF6584', '#FFB946', '#00D2FF'],
-  overlay: 'rgba(26,29,59,0.5)',
+  avatarColors: ['#2F855A', '#276749', '#38A169', '#48BB78', '#9AE6B4', '#22543D'],
+  overlay: 'rgba(11,59,46,0.5)',
 };
 
 export const Radius = {

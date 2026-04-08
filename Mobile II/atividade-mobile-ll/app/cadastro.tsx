@@ -2,17 +2,18 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
 import {
-    ActivityIndicator,
-    Alert,
-    FlatList,
-    Modal,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Alert,
+  FlatList,
+  Modal,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
+import { Colors } from '../src/constants/theme';
 import { buscarEnderecoPorCep } from '../src/utils/cepService';
 import { salvarUsuario } from '../src/utils/storageService';
 
@@ -113,7 +114,7 @@ export default function CadastroScreen() {
 
           {/* ── Dados Pessoais ── */}
           <View style={styles.secaoContainer}>
-            <Ionicons name="person-circle-outline" size={18} color="#667EEA" />
+            <Ionicons name="person-circle-outline" size={18} color={Colors.primary} />
             <Text style={styles.secao}>Dados pessoais</Text>
           </View>
 
@@ -184,7 +185,7 @@ export default function CadastroScreen() {
 
           {/* ── Endereço ── */}
           <View style={[styles.secaoContainer, { marginTop: 10 }]}>
-            <Ionicons name="location-outline" size={18} color="#667EEA" />
+            <Ionicons name="location-outline" size={18} color={Colors.primary} />
             <Text style={styles.secao}>Endereço</Text>
           </View>
 
@@ -207,13 +208,13 @@ export default function CadastroScreen() {
                 disabled={buscandoCep || carregando}
               >
                 <Gradient
-                  colors={['#667EEA', '#764BA2']}
+                  colors={[Colors.gradientStart, Colors.gradientEnd]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={[styles.btnBuscar, buscandoCep && styles.botaoDesabilitado]}
                 >
                   {buscandoCep
-                    ? <ActivityIndicator color="#fff" size="small" />
+                    ? <ActivityIndicator color={Colors.textOnPrimary} size="small" />
                     : <Text style={styles.btnBuscarTexto}>Buscar</Text>
                   }
                 </Gradient>
@@ -293,15 +294,15 @@ export default function CadastroScreen() {
             style={{ marginTop: 18 }}
           >
             <Gradient
-              colors={['#667EEA', '#764BA2']}
+              colors={[Colors.gradientStart, Colors.gradientEnd]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={[styles.botao, carregando && styles.botaoDesabilitado]}
             >
               {carregando
-                ? <ActivityIndicator color="#fff" />
+                ? <ActivityIndicator color={Colors.textOnPrimary} />
                 : <>
-                    <Ionicons name="checkmark-circle" size={20} color="#fff" style={{ marginRight: 8 }} />
+                    <Ionicons name="checkmark-circle" size={20} color={Colors.textOnPrimary} style={{ marginRight: 8 }} />
                     <Text style={styles.botaoTexto}>Criar conta</Text>
                   </>
               }
@@ -343,9 +344,9 @@ export default function CadastroScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F5F7FF' },
+  container: { flex: 1, backgroundColor: Colors.bg },
   content: { padding: 20, paddingBottom: 40 },
-  subtitulo: { fontSize: 14, color: '#6B7194', marginBottom: 22, textAlign: 'center', lineHeight: 20 },
+  subtitulo: { fontSize: 14, color: Colors.textSecondary, marginBottom: 22, textAlign: 'center', lineHeight: 20 },
   secaoContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -353,28 +354,28 @@ const styles = StyleSheet.create({
     marginBottom: 14,
     paddingBottom: 10,
     borderBottomWidth: 2,
-    borderBottomColor: '#E2E5F1',
+    borderBottomColor: Colors.border,
   },
   secao: {
     fontSize: 12,
     fontWeight: '800',
-    color: '#667EEA',
+    color: Colors.primary,
     textTransform: 'uppercase',
     letterSpacing: 1.5,
   },
   grupo: { marginBottom: 16 },
-  label: { fontSize: 13, fontWeight: '600', color: '#1A1D3B', marginBottom: 7 },
+  label: { fontSize: 13, fontWeight: '600', color: Colors.text, marginBottom: 7 },
   input: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Colors.card,
     borderWidth: 1.5,
-    borderColor: '#E2E5F1',
+    borderColor: Colors.border,
     borderRadius: 14,
     paddingHorizontal: 16,
     paddingVertical: 13,
     fontSize: 15,
-    color: '#1A1D3B',
+    color: Colors.text,
   },
-  inputReadOnly: { backgroundColor: '#EEF0F8', color: '#6B7194' },
+  inputReadOnly: { backgroundColor: Colors.surface, color: Colors.textSecondary },
   linha: { flexDirection: 'row', gap: 10, alignItems: 'center' },
   btnBuscar: {
     borderRadius: 14,
@@ -384,37 +385,37 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     minWidth: 85,
   },
-  btnBuscarTexto: { color: '#fff', fontWeight: '700', fontSize: 14 },
+  btnBuscarTexto: { color: Colors.textOnPrimary, fontWeight: '700', fontSize: 14 },
   seletor: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  seletorTexto: { fontSize: 15, color: '#1A1D3B' },
-  seletorPlaceholder: { fontSize: 15, color: '#A8AEBF' },
-  seletorSeta: { fontSize: 13, color: '#A8AEBF' },
+  seletorTexto: { fontSize: 15, color: Colors.text },
+  seletorPlaceholder: { fontSize: 15, color: Colors.textMuted },
+  seletorSeta: { fontSize: 13, color: Colors.textMuted },
   botao: {
     borderRadius: 14,
     paddingVertical: 16,
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
-    shadowColor: '#667EEA',
+    shadowColor: Colors.primary,
     shadowOpacity: 0.35,
     shadowRadius: 10,
     shadowOffset: { width: 0, height: 5 },
     elevation: 6,
   },
   botaoDesabilitado: { opacity: 0.5 },
-  botaoTexto: { color: '#fff', fontSize: 16, fontWeight: '700', letterSpacing: 0.3 },
+  botaoTexto: { color: Colors.textOnPrimary, fontSize: 16, fontWeight: '700', letterSpacing: 0.3 },
   // Modal UF
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(26,29,59,0.5)',
+    backgroundColor: Colors.overlay,
     justifyContent: 'flex-end',
   },
   modalUfCard: {
-    backgroundColor: '#fff',
+    backgroundColor: Colors.card,
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
     padding: 22,
@@ -426,19 +427,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 18,
   },
-  modalUfTitulo: { fontSize: 18, fontWeight: '700', color: '#1A1D3B' },
-  modalUfFechar: { fontSize: 24, color: '#A8AEBF', paddingHorizontal: 4 },
+  modalUfTitulo: { fontSize: 18, fontWeight: '700', color: Colors.text },
+  modalUfFechar: { fontSize: 24, color: Colors.textMuted, paddingHorizontal: 4 },
   ufItem: {
     flex: 1,
     margin: 5,
     paddingVertical: 13,
     borderRadius: 12,
     borderWidth: 1.5,
-    borderColor: '#E2E5F1',
+    borderColor: Colors.border,
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: Colors.card,
   },
-  ufItemAtivo: { borderColor: '#667EEA', backgroundColor: '#F0F2FF' },
-  ufItemTexto: { fontSize: 14, fontWeight: '600', color: '#6B7194' },
-  ufItemTextoAtivo: { color: '#667EEA', fontWeight: '700' },
+  ufItemAtivo: { borderColor: Colors.primary, backgroundColor: Colors.surface },
+  ufItemTexto: { fontSize: 14, fontWeight: '600', color: Colors.textSecondary },
+  ufItemTextoAtivo: { color: Colors.primary, fontWeight: '700' },
 });

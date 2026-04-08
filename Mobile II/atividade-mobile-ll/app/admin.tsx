@@ -3,29 +3,30 @@ import { useFocusEffect } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useCallback, useState } from 'react';
 import {
-    ActivityIndicator,
-    Alert,
-    FlatList,
-    KeyboardAvoidingView,
-    Modal,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Alert,
+  FlatList,
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
+import { Colors } from '../src/constants/theme';
 import { useAuth } from '../src/context/AuthContext';
 import { buscarEnderecoPorCep } from '../src/utils/cepService';
 import {
-    atualizarUsuario,
-    deletarUsuario,
-    obterTodosUsuarios,
-    salvarUsuario
+  atualizarUsuario,
+  deletarUsuario,
+  obterTodosUsuarios,
+  salvarUsuario
 } from '../src/utils/storageService';
 
-const AVATAR_COLORS = ['#667EEA', '#764BA2', '#00C48C', '#FF6584', '#FFB946', '#00D2FF'];
+const AVATAR_COLORS = Colors.avatarColors;
 
 const UFS = [
   'AC','AL','AP','AM','BA','CE','DF','ES','GO','MA',
@@ -96,32 +97,32 @@ function TelaLogin() {
       <View style={styles.loginCard}>
         <View style={styles.loginIconeWrapper}>
           <LinearGradient
-            colors={['#667EEA', '#764BA2']}
+            colors={[Colors.gradientStart, Colors.gradientEnd]}
             style={styles.loginIconeGradient}
           >
-            <Ionicons name="shield-checkmark" size={32} color="#fff" />
+            <Ionicons name="shield-checkmark" size={32} color={Colors.textOnPrimary} />
           </LinearGradient>
         </View>
         <Text style={styles.loginTitulo}>Acesso Administrativo</Text>
         <Text style={styles.loginSubtitulo}>Faça login para gerenciar usuários</Text>
 
         <View style={styles.inputComIcone}>
-          <Ionicons name="person-outline" size={20} color="#A8AEBF" style={{ marginRight: 12 }} />
+          <Ionicons name="person-outline" size={20} color={Colors.textMuted} style={{ marginRight: 12 }} />
           <TextInput
             style={styles.inputIconeTexto}
             placeholder="Usuário"
-            placeholderTextColor="#A8AEBF"
+            placeholderTextColor={Colors.textMuted}
             value={usuario}
             onChangeText={(v) => { setUsuario(v); setErro(''); }}
             autoCapitalize="none"
           />
         </View>
         <View style={styles.inputComIcone}>
-          <Ionicons name="lock-closed-outline" size={20} color="#A8AEBF" style={{ marginRight: 12 }} />
+          <Ionicons name="lock-closed-outline" size={20} color={Colors.textMuted} style={{ marginRight: 12 }} />
           <TextInput
             style={styles.inputIconeTexto}
             placeholder="Senha"
-            placeholderTextColor="#A8AEBF"
+            placeholderTextColor={Colors.textMuted}
             value={senha}
             onChangeText={(v) => { setSenha(v); setErro(''); }}
             secureTextEntry
@@ -136,16 +137,16 @@ function TelaLogin() {
           style={{ width: '100%' }}
         >
           <LinearGradient
-            colors={['#667EEA', '#764BA2']}
+            colors={[Colors.gradientStart, Colors.gradientEnd]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={[styles.botaoPrimario, carregando && styles.botaoDesabilitado]}
           >
             {carregando ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color={Colors.textOnPrimary} />
             ) : (
               <>
-                <Ionicons name="log-in-outline" size={20} color="#fff" style={{ marginRight: 8 }} />
+                <Ionicons name="log-in-outline" size={20} color={Colors.textOnPrimary} style={{ marginRight: 8 }} />
                 <Text style={styles.botaoTexto}>Entrar</Text>
               </>
             )}
@@ -296,26 +297,26 @@ function PainelAdmin() {
       <View style={styles.cardInfo}>
         <Text style={styles.cardNome}>{item.nome}</Text>
         <View style={styles.cardRow}>
-          <Ionicons name="mail-outline" size={12} color="#6B7194" />
+          <Ionicons name="mail-outline" size={12} color={Colors.textSecondary} />
           <Text style={styles.cardEmail}>{item.email}</Text>
         </View>
         {item.telefone ? (
           <View style={styles.cardRow}>
-            <Ionicons name="call-outline" size={11} color="#6B7194" />
+            <Ionicons name="call-outline" size={11} color={Colors.textSecondary} />
             <Text style={styles.cardTelefone}>{item.telefone}</Text>
           </View>
         ) : null}
         <View style={styles.cardRow}>
-          <Ionicons name="calendar-outline" size={11} color="#A8AEBF" />
+          <Ionicons name="calendar-outline" size={11} color={Colors.textMuted} />
           <Text style={styles.cardData}>{item.dataCadastro}</Text>
         </View>
       </View>
       <View style={styles.cardAcoes}>
         <TouchableOpacity style={styles.btnEditar} onPress={() => abrirModalEditar(item)}>
-          <Ionicons name="create-outline" size={18} color="#667EEA" />
+          <Ionicons name="create-outline" size={18} color={Colors.primary} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.btnDeletar} onPress={() => handleDeletar(item)}>
-          <Ionicons name="trash-outline" size={18} color="#FF6584" />
+          <Ionicons name="trash-outline" size={18} color={Colors.danger} />
         </TouchableOpacity>
       </View>
     </View>
@@ -327,7 +328,7 @@ function PainelAdmin() {
       <View style={styles.painelHeader}>
         <Text style={styles.painelContagem}>{usuarios.length} usuário(s)</Text>
         <TouchableOpacity style={styles.btnLogout} onPress={logoutAdmin}>
-          <Ionicons name="log-out-outline" size={16} color="#6B7194" style={{ marginRight: 4 }} />
+          <Ionicons name="log-out-outline" size={16} color={Colors.textSecondary} style={{ marginRight: 4 }} />
           <Text style={styles.btnLogoutTexto}>Sair</Text>
         </TouchableOpacity>
       </View>
@@ -335,30 +336,30 @@ function PainelAdmin() {
       {/* Botão novo usuário */}
       <TouchableOpacity onPress={abrirModalNovo}>
         <LinearGradient
-          colors={['#00C48C', '#00A878']}
+          colors={[Colors.success, Colors.successDark]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={styles.btnNovo}
         >
-          <Ionicons name="person-add" size={18} color="#fff" style={{ marginRight: 8 }} />
+          <Ionicons name="person-add" size={18} color={Colors.textOnPrimary} style={{ marginRight: 8 }} />
           <Text style={styles.botaoTexto}>Novo Usuário</Text>
         </LinearGradient>
       </TouchableOpacity>
 
       {/* Busca */}
       <View style={styles.buscaContainer}>
-        <Ionicons name="search-outline" size={18} color="#A8AEBF" style={{ marginRight: 8 }} />
+        <Ionicons name="search-outline" size={18} color={Colors.textMuted} style={{ marginRight: 8 }} />
         <TextInput
           style={styles.buscaInput}
           placeholder="Buscar por nome ou ID..."
-          placeholderTextColor="#A8AEBF"
+          placeholderTextColor={Colors.textMuted}
           value={busca}
           onChangeText={setBusca}
           clearButtonMode="while-editing"
         />
         {busca.trim() ? (
           <TouchableOpacity onPress={() => setBusca('')} style={styles.buscaLimpar}>
-            <Ionicons name="close-circle" size={20} color="#A8AEBF" />
+            <Ionicons name="close-circle" size={20} color={Colors.textMuted} />
           </TouchableOpacity>
         ) : null}
       </View>
@@ -372,16 +373,16 @@ function PainelAdmin() {
           usuarios.length === 0 ? styles.listaVazia : { padding: 16, paddingTop: 8 }
         }
         ListEmptyComponent={
-          carregando ? (
-            <ActivityIndicator size="large" color="#667EEA" style={{ marginTop: 40 }} />
+            carregando ? (
+            <ActivityIndicator size="large" color={Colors.primary} style={{ marginTop: 40 }} />
           ) : busca.trim() ? (
             <View style={styles.vazioContainer}>
-              <Ionicons name="search-outline" size={56} color="#E2E5F1" />
+              <Ionicons name="search-outline" size={56} color={Colors.border} />
               <Text style={styles.vazioTexto}>Nenhum resultado para "{busca}".</Text>
             </View>
           ) : (
             <View style={styles.vazioContainer}>
-              <Ionicons name="people-outline" size={56} color="#E2E5F1" />
+              <Ionicons name="people-outline" size={56} color={Colors.border} />
               <Text style={styles.vazioTexto}>Nenhum usuário cadastrado.</Text>
             </View>
           )
@@ -462,13 +463,13 @@ function PainelAdmin() {
                     disabled={buscandoCep}
                   >
                     <LinearGradient
-                      colors={['#667EEA', '#764BA2']}
+                      colors={[Colors.gradientStart, Colors.gradientEnd]}
                       start={{ x: 0, y: 0 }}
                       end={{ x: 1, y: 0 }}
                       style={[styles.btnBuscar, buscandoCep && styles.botaoDesabilitado]}
                     >
                       {buscandoCep
-                        ? <ActivityIndicator color="#fff" size="small" />
+                        ? <ActivityIndicator color={Colors.textOnPrimary} size="small" />
                         : <Text style={styles.btnBuscarTexto}>Buscar</Text>
                       }
                     </LinearGradient>
@@ -530,12 +531,12 @@ function PainelAdmin() {
                 </TouchableOpacity>
                 <TouchableOpacity onPress={handleSalvar} style={{ flex: 1 }}>
                   <LinearGradient
-                    colors={['#667EEA', '#764BA2']}
+                    colors={[Colors.gradientStart, Colors.gradientEnd]}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
                     style={styles.botaoPrimario}
                   >
-                    <Ionicons name="checkmark-circle" size={18} color="#fff" style={{ marginRight: 6 }} />
+                    <Ionicons name="checkmark-circle" size={18} color={Colors.textOnPrimary} style={{ marginRight: 6 }} />
                     <Text style={styles.botaoTexto}>Salvar</Text>
                   </LinearGradient>
                 </TouchableOpacity>
@@ -589,23 +590,23 @@ const styles = StyleSheet.create({
   // Login
   loginContainer: {
     flex: 1,
-    backgroundColor: '#F8F9FD',
+    backgroundColor: Colors.bg,
     justifyContent: 'center',
     padding: 24,
   },
   loginCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Colors.card,
     borderRadius: 20,
     padding: 32,
     paddingVertical: 40,
     alignItems: 'center',
-    shadowColor: '#6C5CE7',
+    shadowColor: Colors.primary,
     shadowOpacity: 0.1,
     shadowRadius: 16,
     shadowOffset: { width: 0, height: 6 },
     elevation: 6,
     borderWidth: 1,
-    borderColor: '#F0F1F6',
+    borderColor: Colors.surface,
     gap: 14,
   },
   loginIcone: {
@@ -615,17 +616,17 @@ const styles = StyleSheet.create({
   loginTitulo: {
     fontSize: 22,
     fontWeight: '700',
-    color: '#2D3436',
+    color: Colors.text,
     marginBottom: 0,
   },
   loginSubtitulo: {
     fontSize: 13,
-    color: '#636E72',
+    color: Colors.textSecondary,
     marginBottom: 10,
     textAlign: 'center',
   },
   erroTexto: {
-    color: '#FF6B6B',
+    color: Colors.danger,
     fontSize: 13,
     marginBottom: 10,
     textAlign: 'center',
@@ -633,14 +634,14 @@ const styles = StyleSheet.create({
   dica: {
     marginTop: 8,
     fontSize: 12,
-    color: '#B2BEC3',
+    color: Colors.textMuted,
   },
   inputComIcone: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F8F9FD',
+    backgroundColor: Colors.bg,
     borderWidth: 1.5,
-    borderColor: '#E2E5F1',
+    borderColor: Colors.border,
     borderRadius: 14,
     paddingHorizontal: 16,
     paddingVertical: 4,
@@ -649,13 +650,13 @@ const styles = StyleSheet.create({
   inputIconeTexto: {
     flex: 1,
     fontSize: 15,
-    color: '#1A1D3B',
+    color: Colors.text,
     paddingVertical: 12,
   },
   // Painel
   painelContainer: {
     flex: 1,
-    backgroundColor: '#F8F9FD',
+    backgroundColor: Colors.bg,
   },
   painelHeader: {
     flexDirection: 'row',
@@ -667,51 +668,51 @@ const styles = StyleSheet.create({
   },
   painelContagem: {
     fontSize: 13,
-    color: '#636E72',
+    color: Colors.textSecondary,
   },
   buscaContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginHorizontal: 16,
     marginBottom: 4,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Colors.card,
     borderRadius: 12,
     borderWidth: 1.5,
-    borderColor: '#E4E6EF',
+    borderColor: Colors.border,
     paddingHorizontal: 14,
   },
   buscaInput: {
     flex: 1,
     height: 44,
     fontSize: 14,
-    color: '#2D3436',
+    color: Colors.text,
   },
   buscaLimpar: {
     padding: 6,
   },
   buscaLimparTexto: {
     fontSize: 14,
-    color: '#B2BEC3',
+    color: Colors.textMuted,
   },
   btnLogout: {
-    backgroundColor: '#F0F1F6',
+    backgroundColor: Colors.surface,
     paddingHorizontal: 14,
     paddingVertical: 7,
     borderRadius: 10,
   },
   btnLogoutTexto: {
     fontSize: 13,
-    color: '#636E72',
+    color: Colors.textSecondary,
     fontWeight: '600',
   },
   btnNovo: {
-    backgroundColor: '#00B894',
+    backgroundColor: Colors.success,
     marginHorizontal: 16,
     marginVertical: 10,
     borderRadius: 12,
     paddingVertical: 13,
     alignItems: 'center',
-    shadowColor: '#00B894',
+    shadowColor: Colors.success,
     shadowOpacity: 0.25,
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 3 },
@@ -719,31 +720,31 @@ const styles = StyleSheet.create({
   },
   // Card
   card: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Colors.card,
     borderRadius: 14,
     padding: 14,
     marginBottom: 10,
     flexDirection: 'row',
     alignItems: 'center',
-    shadowColor: '#6C5CE7',
+    shadowColor: Colors.primary,
     shadowOpacity: 0.06,
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 3 },
     elevation: 3,
     borderWidth: 1,
-    borderColor: '#F0F1F6',
+    borderColor: Colors.surface,
   },
   cardAvatar: {
     width: 46,
     height: 46,
     borderRadius: 23,
-    backgroundColor: '#6C5CE7',
+    backgroundColor: Colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
   },
   cardAvatarLetra: {
-    color: '#fff',
+    color: Colors.textOnPrimary,
     fontSize: 20,
     fontWeight: '700',
   },
@@ -753,21 +754,21 @@ const styles = StyleSheet.create({
   cardNome: {
     fontSize: 15,
     fontWeight: '700',
-    color: '#2D3436',
+    color: Colors.text,
   },
   cardEmail: {
     fontSize: 13,
-    color: '#636E72',
+    color: Colors.textSecondary,
     marginTop: 1,
   },
   cardTelefone: {
     fontSize: 12,
-    color: '#636E72',
+    color: Colors.textSecondary,
     marginTop: 1,
   },
   cardData: {
     fontSize: 11,
-    color: '#B2BEC3',
+    color: Colors.textMuted,
     marginTop: 3,
   },
   cardAcoes: {
@@ -776,12 +777,12 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   btnEditar: {
-    backgroundColor: '#F0EDFF',
+    backgroundColor: Colors.surface,
     padding: 8,
     borderRadius: 10,
   },
   btnDeletar: {
-    backgroundColor: '#FFE8E8',
+    backgroundColor: Colors.dangerLight,
     padding: 8,
     borderRadius: 10,
   },
@@ -803,19 +804,19 @@ const styles = StyleSheet.create({
   },
   vazioTexto: {
     fontSize: 15,
-    color: '#636E72',
+    color: Colors.textSecondary,
   },
   // Modal
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: Colors.overlay,
     justifyContent: 'flex-end',
   },
   modalWrapper: {
     width: '100%',
   },
   modalCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Colors.card,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     padding: 24,
@@ -824,7 +825,7 @@ const styles = StyleSheet.create({
   modalTitulo: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#2D3436',
+    color: Colors.text,
     marginBottom: 20,
     textAlign: 'center',
   },
@@ -837,23 +838,23 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#2D3436',
+    color: Colors.text,
     marginBottom: 6,
     marginTop: 10,
   },
   input: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Colors.card,
     borderWidth: 1.5,
-    borderColor: '#E4E6EF',
+    borderColor: Colors.border,
     borderRadius: 12,
     paddingHorizontal: 14,
     paddingVertical: 12,
     fontSize: 15,
-    color: '#2D3436',
+    color: Colors.text,
     width: '100%',
   },
   botaoPrimario: {
-    backgroundColor: '#6C5CE7',
+    backgroundColor: Colors.primary,
     borderRadius: 12,
     paddingVertical: 14,
     alignItems: 'center',
@@ -862,36 +863,36 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   botaoTexto: {
-    color: '#fff',
+    color: Colors.textOnPrimary,
     fontSize: 15,
     fontWeight: '700',
   },
   btnCancelar: {
-    backgroundColor: '#F0F1F6',
+    backgroundColor: Colors.surface,
     borderRadius: 12,
     paddingVertical: 14,
     alignItems: 'center',
   },
   btnCancelarTexto: {
-    color: '#636E72',
+    color: Colors.textSecondary,
     fontSize: 15,
     fontWeight: '600',
   },
   labelSecao: {
     fontSize: 11,
     fontWeight: '700',
-    color: '#6C5CE7',
+    color: Colors.primary,
     textTransform: 'uppercase',
     letterSpacing: 1.2,
     marginTop: 14,
     marginBottom: 4,
     paddingBottom: 6,
     borderBottomWidth: 2,
-    borderBottomColor: '#E4E6EF',
+    borderBottomColor: Colors.border,
   },
   linha: { flexDirection: 'row', gap: 8, alignItems: 'center' },
   btnBuscar: {
-    backgroundColor: '#6C5CE7',
+    backgroundColor: Colors.primary,
     borderRadius: 12,
     paddingHorizontal: 14,
     paddingVertical: 12,
@@ -899,35 +900,35 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     minWidth: 72,
   },
-  btnBuscarTexto: { color: '#fff', fontWeight: '700', fontSize: 13 },
-  inputReadOnly: { backgroundColor: '#F0F1F6', color: '#636E72' },
+  btnBuscarTexto: { color: Colors.textOnPrimary, fontWeight: '700', fontSize: 13 },
+  inputReadOnly: { backgroundColor: Colors.surface, color: Colors.textSecondary },
   seletor: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  seletorTexto: { fontSize: 15, color: '#2D3436' },
-  seletorPlaceholder: { fontSize: 15, color: '#B2BEC3' },
-  seletorSeta: { fontSize: 13, color: '#B2BEC3' },
+  seletorTexto: { fontSize: 15, color: Colors.text },
+  seletorPlaceholder: { fontSize: 15, color: Colors.textMuted },
+  seletorSeta: { fontSize: 13, color: Colors.textMuted },
   // Modal UF
   ufOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },
   ufCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Colors.card,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     padding: 20,
     maxHeight: '55%',
   },
   ufHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 },
-  ufTitulo: { fontSize: 17, fontWeight: '700', color: '#2D3436' },
-  ufFechar: { fontSize: 22, color: '#B2BEC3', paddingHorizontal: 4 },
+  ufTitulo: { fontSize: 17, fontWeight: '700', color: Colors.text },
+  ufFechar: { fontSize: 22, color: Colors.textMuted, paddingHorizontal: 4 },
   ufItem: {
     flex: 1,
     margin: 5,
     paddingVertical: 12,
     borderRadius: 10,
     borderWidth: 1.5,
-    borderColor: '#E4E6EF',
+    borderColor: Colors.border,
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Colors.card,
   },
-  ufItemAtivo: { borderColor: '#6C5CE7', backgroundColor: '#F0EDFF' },
-  ufItemTexto: { fontSize: 14, fontWeight: '600', color: '#636E72' },
-  ufItemTextoAtivo: { color: '#6C5CE7' },
+  ufItemAtivo: { borderColor: Colors.primary, backgroundColor: Colors.surface },
+  ufItemTexto: { fontSize: 14, fontWeight: '600', color: Colors.textSecondary },
+  ufItemTextoAtivo: { color: Colors.primary },
 });

@@ -3,19 +3,20 @@ import { useFocusEffect } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useCallback, useState } from 'react';
 import {
-    ActivityIndicator,
-    Alert,
-    FlatList,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Alert,
+  FlatList,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
+import { Colors } from '../src/constants/theme';
 import { useAuth } from '../src/context/AuthContext';
 import { obterTodosUsuarios } from '../src/utils/storageService';
 
-const AVATAR_COLORS = ['#667EEA', '#764BA2', '#00C48C', '#FF6584', '#FFB946', '#00D2FF'];
+const AVATAR_COLORS = Colors.avatarColors;
 
 interface Usuario {
   id: number;
@@ -74,22 +75,22 @@ export default function ListaScreen() {
       <View style={styles.info}>
         <Text style={styles.nome}>{item.nome}</Text>
         <View style={styles.infoRow}>
-          <Ionicons name="mail-outline" size={13} color="#6B7194" />
+          <Ionicons name="mail-outline" size={13} color={Colors.textSecondary} />
           <Text style={styles.email}>{item.email}</Text>
         </View>
         {item.telefone ? (
           <View style={styles.infoRow}>
-            <Ionicons name="call-outline" size={12} color="#6B7194" />
+            <Ionicons name="call-outline" size={12} color={Colors.textSecondary} />
             <Text style={styles.telefone}>{item.telefone}</Text>
           </View>
         ) : null}
         <View style={styles.infoRow}>
-          <Ionicons name="calendar-outline" size={11} color="#A8AEBF" />
+          <Ionicons name="calendar-outline" size={11} color={Colors.textMuted} />
           <Text style={styles.data}>{item.dataCadastro}</Text>
         </View>
         {isAdmin && (
-          <View style={styles.infoRow}>
-            <Ionicons name="finger-print-outline" size={11} color="#8B9CF7" />
+            <View style={styles.infoRow}>
+            <Ionicons name="finger-print-outline" size={11} color={Colors.primaryLight} />
             <Text style={styles.idTexto}>ID: {item.id}</Text>
           </View>
         )}
@@ -100,7 +101,7 @@ export default function ListaScreen() {
   if (carregando) {
     return (
       <View style={styles.centralizado}>
-        <ActivityIndicator size="large" color="#667EEA" />
+        <ActivityIndicator size="large" color={Colors.primary} />
         <Text style={styles.carregandoTexto}>Carregando usuários...</Text>
       </View>
     );
@@ -116,18 +117,18 @@ export default function ListaScreen() {
       ListHeaderComponent={
         <View>
           <View style={styles.buscaWrapper}>
-            <Ionicons name="search-outline" size={18} color="#A8AEBF" style={{ marginRight: 10 }} />
+            <Ionicons name="search-outline" size={18} color={Colors.textMuted} style={{ marginRight: 10 }} />
             <TextInput
               style={styles.campoBusca}
               placeholder="Buscar por nome ou ID..."
-              placeholderTextColor="#A8AEBF"
+              placeholderTextColor={Colors.textMuted}
               value={busca}
               onChangeText={(t) => { setBusca(t); setPaginaAtual(1); }}
               autoCorrect={false}
             />
             {busca.trim() ? (
-              <TouchableOpacity onPress={() => setBusca('')}>
-                <Ionicons name="close-circle" size={20} color="#A8AEBF" />
+                <TouchableOpacity onPress={() => setBusca('')}>
+                <Ionicons name="close-circle" size={20} color={Colors.textMuted} />
               </TouchableOpacity>
             ) : null}
           </View>
@@ -137,8 +138,8 @@ export default function ListaScreen() {
         </View>
       }
       ListEmptyComponent={
-        <View style={styles.vazioContainer}>
-          <Ionicons name="people-outline" size={64} color="#E2E5F1" />
+          <View style={styles.vazioContainer}>
+          <Ionicons name="people-outline" size={64} color={Colors.border} />
           <Text style={styles.vazioTexto}>Nenhum usuário cadastrado ainda.</Text>
           <Text style={styles.vazioSubtexto}>Vá à aba Cadastro para adicionar usuários.</Text>
         </View>
@@ -151,12 +152,12 @@ export default function ListaScreen() {
               disabled={paginaAtual === 1}
             >
               <LinearGradient
-                colors={paginaAtual === 1 ? ['#E2E5F1', '#E2E5F1'] : ['#667EEA', '#764BA2']}
+                colors={paginaAtual === 1 ? [Colors.border, Colors.border] : [Colors.gradientStart, Colors.gradientEnd]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
                 style={styles.btnPagina}
               >
-                <Ionicons name="chevron-back" size={16} color={paginaAtual === 1 ? '#A8AEBF' : '#fff'} />
+                <Ionicons name="chevron-back" size={16} color={paginaAtual === 1 ? Colors.textMuted : Colors.textOnPrimary} />
                 <Text style={[styles.btnPaginaTexto, paginaAtual === 1 && styles.btnPaginaTextoDesabilitado]}>Anterior</Text>
               </LinearGradient>
             </TouchableOpacity>
@@ -170,13 +171,13 @@ export default function ListaScreen() {
               disabled={paginaAtual === totalPaginas}
             >
               <LinearGradient
-                colors={paginaAtual === totalPaginas ? ['#E2E5F1', '#E2E5F1'] : ['#667EEA', '#764BA2']}
+                colors={paginaAtual === totalPaginas ? [Colors.border, Colors.border] : [Colors.gradientStart, Colors.gradientEnd]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
                 style={styles.btnPagina}
               >
                 <Text style={[styles.btnPaginaTexto, paginaAtual === totalPaginas && styles.btnPaginaTextoDesabilitado]}>Próxima</Text>
-                <Ionicons name="chevron-forward" size={16} color={paginaAtual === totalPaginas ? '#A8AEBF' : '#fff'} />
+                <Ionicons name="chevron-forward" size={16} color={paginaAtual === totalPaginas ? Colors.textMuted : Colors.textOnPrimary} />
               </LinearGradient>
             </TouchableOpacity>
           </View>
@@ -191,30 +192,30 @@ export default function ListaScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F7FF',
+    backgroundColor: Colors.bg,
   },
   centralizado: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5F7FF',
+    backgroundColor: Colors.bg,
   },
   carregandoTexto: {
     marginTop: 12,
-    color: '#6B7194',
+    color: Colors.textSecondary,
     fontSize: 14,
   },
   buscaWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Colors.card,
     borderRadius: 14,
     paddingHorizontal: 16,
     marginHorizontal: 16,
     marginTop: 14,
     borderWidth: 1.5,
-    borderColor: '#E2E5F1',
-    shadowColor: '#667EEA',
+    borderColor: Colors.border,
+    shadowColor: Colors.primary,
     shadowOpacity: 0.06,
     shadowRadius: 10,
     elevation: 2,
@@ -223,29 +224,29 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 46,
     fontSize: 14,
-    color: '#1A1D3B',
+    color: Colors.text,
   },
   contagem: {
     fontSize: 13,
-    color: '#6B7194',
+    color: Colors.textSecondary,
     paddingHorizontal: 16,
     paddingTop: 10,
     paddingBottom: 4,
   },
   card: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Colors.card,
     borderRadius: 16,
     padding: 16,
     marginBottom: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    shadowColor: '#667EEA',
+    shadowColor: Colors.primary,
     shadowOpacity: 0.07,
     shadowRadius: 10,
     shadowOffset: { width: 0, height: 4 },
     elevation: 3,
     borderWidth: 1,
-    borderColor: '#F0F2FF',
+    borderColor: Colors.surface,
   },
   avatar: {
     width: 50,
@@ -256,7 +257,7 @@ const styles = StyleSheet.create({
     marginRight: 14,
   },
   avatarLetra: {
-    color: '#fff',
+    color: Colors.textOnPrimary,
     fontSize: 20,
     fontWeight: '700',
   },
@@ -272,24 +273,24 @@ const styles = StyleSheet.create({
   nome: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#1A1D3B',
+    color: Colors.text,
     marginBottom: 4,
   },
   email: {
     fontSize: 13,
-    color: '#6B7194',
+    color: Colors.textSecondary,
   },
   telefone: {
     fontSize: 12,
-    color: '#6B7194',
+    color: Colors.textSecondary,
   },
   data: {
     fontSize: 11,
-    color: '#A8AEBF',
+    color: Colors.textMuted,
   },
   idTexto: {
     fontSize: 10,
-    color: '#8B9CF7',
+    color: Colors.primaryLight,
     fontFamily: 'monospace',
   },
   vazio: {
@@ -304,13 +305,13 @@ const styles = StyleSheet.create({
   },
   vazioTexto: {
     fontSize: 16,
-    color: '#6B7194',
+    color: Colors.textSecondary,
     fontWeight: '600',
     marginTop: 8,
   },
   vazioSubtexto: {
     fontSize: 13,
-    color: '#A8AEBF',
+    color: Colors.textMuted,
     textAlign: 'center',
   },
   paginacao: {
@@ -330,16 +331,16 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   btnPaginaTexto: {
-    color: '#fff',
+    color: Colors.textOnPrimary,
     fontWeight: '600',
     fontSize: 14,
   },
   btnPaginaTextoDesabilitado: {
-    color: '#A8AEBF',
+    color: Colors.textMuted,
   },
   paginaInfo: {
     fontSize: 14,
-    color: '#6B7194',
+    color: Colors.textSecondary,
     fontWeight: '700',
   },
 });
