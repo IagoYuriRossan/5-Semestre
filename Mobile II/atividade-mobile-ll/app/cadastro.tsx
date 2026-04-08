@@ -84,6 +84,11 @@ export default function CadastroScreen() {
       Alert.alert('Atenção', 'Nome, e-mail e senha são obrigatórios.');
       return;
     }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      Alert.alert('Atenção', 'Informe um e-mail válido.');
+      return;
+    }
     if (senha !== confirmarSenha) {
       Alert.alert('Atenção', 'As senhas não coincidem.');
       return;

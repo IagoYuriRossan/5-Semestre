@@ -249,6 +249,11 @@ function PainelAdmin() {
       Alert.alert('Atenção', 'Nome, e-mail e senha são obrigatórios.');
       return;
     }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(form.email.trim())) {
+      Alert.alert('Atenção', 'Informe um e-mail válido.');
+      return;
+    }
     if (form.senha.length < 6) {
       Alert.alert('Atenção', 'A senha deve ter pelo menos 6 caracteres.');
       return;
