@@ -1,0 +1,30 @@
+
+### get
+GET http://localhost:3000/
+
+### post
+POST http://localhost:3000/add
+
+Content-Type: application/json
+
+{
+  "name": "Exemplo"
+}
+
+### put
+PUT http://localhost:3000/update/1
+
+Content-Type: application/json
+
+{
+  "name": "valor"
+}
+
+
+### delete
+DELETE http://localhost:3000/delete/69e032d1fc2d46a1083cd792
+
+Content-Type: application/json
+{
+  "name": "valor"
+}   
