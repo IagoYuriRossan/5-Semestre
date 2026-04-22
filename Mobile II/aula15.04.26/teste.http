@@ -4,7 +4,6 @@ GET http://localhost:3000/
 
 ### post
 POST http://localhost:3000/add
-
 Content-Type: application/json
 
 {
