@@ -24,6 +24,7 @@ Eles contrataram você no contrato para ajudá-los a descobrir isso!
 #  bibliotecas 
 import pandas as pd
 import numpy as np
+import os
 import matplotlib.pyplot as plt
 try:
     import seaborn as sns
@@ -64,7 +65,25 @@ else:
 #%%
 #  SE ARQUIVO LOCAL 
 
-customers = pd.read_csv("Ecommerce Customers")
+# Tenta localizar o arquivo CSV em nomes comuns na pasta atual
+csv_candidates = [
+  "Ecommerce Customers",
+  "Ecommerce Customers.csv",
+  "Ecommerce_Customers.csv",
+  "ecommerce_customers.csv",
+]
+found = None
+for fn in csv_candidates:
+  if os.path.exists(fn):
+    found = fn
+    break
+
+if found is None:
+  raise FileNotFoundError(
+    "Arquivo 'Ecommerce Customers' não encontrado no diretório atual ({}).\nColoque o CSV na mesma pasta do script ou informe o caminho correto.".format(os.getcwd())
+  )
+
+customers = pd.read_csv(found)
 customers.head()
 customers.describe()
 customers.info()

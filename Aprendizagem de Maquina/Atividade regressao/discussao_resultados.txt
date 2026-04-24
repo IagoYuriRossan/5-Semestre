@@ -1,0 +1,129 @@
+========================================================
+  DISCUSSÃO DOS RESULTADOS — Algerian Forest Fires
+  Regressão: y = FWI (Fire Weather Index)
+========================================================
+
+--------------------------------------------------------
+1. IMPORTÂNCIA DE CADA VARIÁVEL NO RESULTADO y (FWI)
+--------------------------------------------------------
+
+A equação obtida pela Regressão Linear (variáveis normalizadas) foi:
+
+  FWI = 7.4201
+        +5.2428 * (ISI)
+        +3.9554 * (BUI)
+        -0.7185 * (FFMC)
+        -0.3159 * (DC)
+        +0.1328 * (DMC)
+        +0.0314 * (Rain)
+        -0.0943 * (Ws)
+        -0.0782 * (RH)
+        -0.0682 * (Temperature)
+
+Como as variáveis foram normalizadas pelo StandardScaler antes do
+treinamento, os coeficientes são comparáveis entre si — o maior
+valor absoluto indica a variável com maior influência no FWI.
+
+** ISI — Initial Spread Index (coef: +5.24) **
+  Maior influência de todas. ISI mede a velocidade de propagação
+  inicial do fogo, combinando a velocidade do vento e o teor de
+  umidade de combustíveis finos (via FFMC). Um aumento de ISI
+  eleva diretamente o FWI, pois fogo que se espalha rápido é
+  classificado como mais perigoso.
+
+** BUI — Buildup Index (coef: +3.96) **
+  Segunda maior influência. BUI representa a quantidade total de
+  combustível disponível para queima, combinando DMC e DC. Quanto
+  mais combustível seco acumulado, maior o potencial de intensidade
+  do incêndio — e portanto, maior o FWI.
+
+** FFMC — Fine Fuel Moisture Code (coef: -0.72) **
+  Coeficiente negativo de magnitude relevante. FFMC mede a umidade
+  de materiais finos (folhas secas, gravetos). Valores ALTOS de FFMC
+  indicam combustível SECO — aparentemente contradiz o sinal negativo,
+  mas isso ocorre porque ISI e BUI já capturam esse efeito de forma
+  mais direta. Na presença dessas variáveis, FFMC isolado passa a
+  atuar como um ajuste residual.
+
+** DC — Drought Code (coef: -0.32) **
+  DC mede a seca profunda do solo (meses de seca acumulada). O sinal
+  negativo com baixa magnitude indica que, controlando ISI e BUI, DC
+  contribui pouco de forma adicional. Sua influência já está
+  representada pelo BUI.
+
+** DMC — Duff Moisture Code (coef: +0.13) **
+  Influência pequena e positiva. DMC mede a umidade de camadas
+  intermediárias do solo (decomposição orgânica). Contribui para o
+  BUI, mas sozinho tem efeito residual baixo.
+
+** Rain, Ws (velocidade do vento), RH (umidade relativa),
+   Temperature (coeficientes entre -0.09 e +0.03) **
+  Influência praticamente nula quando as variáveis compostas (ISI,
+  BUI, FFMC) estão presentes no modelo. Isso é esperado: ISI já
+  incorpora Ws e FFMC; BUI já incorpora DMC e DC. As variáveis
+  meteorológicas brutas se tornam redundantes depois que os índices
+  FWI derivados delas são incluídos.
+
+** Conclusão sobre importância das variáveis: **
+  O FWI é dominado por ISI e BUI, que são justamente os índices
+  intermediários projetados para resumir as condições de propagação
+  e intensidade do fogo. Isso faz sentido físico e valida que a
+  base de dados se presta bem à regressão.
+
+
+--------------------------------------------------------
+2. QUESTÃO TEÓRICA
+   Por que na classificação usamos a Matriz de Confusão
+   e na regressão não? O que é utilizado no lugar?
+--------------------------------------------------------
+
+Na CLASSIFICAÇÃO, o objetivo é atribuir cada amostra a uma
+categoria discreta (ex: "fire" ou "not fire"). O resultado
+certo ou errado pode ser contado diretamente:
+
+  - Verdadeiro Positivo (VP): previu "fire"    → era "fire"
+  - Verdadeiro Negativo (VN): previu "not fire" → era "not fire"
+  - Falso Positivo  (FP): previu "fire"    → era "not fire"
+  - Falso Negativo  (FN): previu "not fire" → era "fire"
+
+A Matriz de Confusão organiza essas contagens e permite calcular
+métricas como Acurácia, Precisão e Recall. Ela faz sentido porque
+a saída do modelo é um RÓTULO — dá para dizer "acertou" ou "errou".
+
+Na REGRESSÃO, o modelo prevê um valor contínuo (ex: FWI = 7.43).
+Dificilmente o valor previsto será EXATAMENTE igual ao real.
+Por isso, não faz sentido contar "acertos" — o que importa é
+QUANTO o modelo errou, em média.
+
+As métricas usadas na regressão medem o TAMANHO DO ERRO:
+
+  MAE — Mean Absolute Error (Erro Médio Absoluto)
+    MAE = média de |y_real - y_previsto|
+    Interpretação direta: "em média, o modelo erra X unidades."
+    Neste trabalho: MAE ≈ 0.28 (MLPRegressor) e 0.42 (LinearRegression).
+    Ou seja, o modelo erra em média menos de 0.5 pontos de FWI
+    (escala de 0 a 31.1) — excelente desempenho.
+
+  MSE — Mean Squared Error (Erro Quadrático Médio)
+    MSE = média de (y_real - y_previsto)²
+    Penaliza erros grandes mais do que erros pequenos.
+    Menos intuitivo pois está em unidades ao quadrado.
+
+  RMSE — Root Mean Squared Error (Raiz do Erro Quadrático Médio)
+    RMSE = √MSE
+    Voltando à mesma unidade do y, é mais fácil de interpretar
+    do que o MSE. Indica o desvio padrão dos erros de predição.
+
+  Resumo comparativo deste trabalho:
+    ┌────────────────────┬────────┬────────┐
+    │ Modelo             │  MAE   │  RMSE  │
+    ├────────────────────┼────────┼────────┤
+    │ MLPRegressor       │ 0.2842 │ 0.3909 │
+    │ LinearRegression   │ 0.4240 │ 0.5962 │
+    └────────────────────┴────────┴────────┘
+
+  O MLPRegressor obteve menor erro em ambas as métricas, indicando
+  que a Rede Neural capturou melhor as relações não-lineares entre
+  as variáveis e o FWI do que a regressão linear simples.
+
+========================================================
