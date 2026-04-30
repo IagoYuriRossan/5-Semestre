@@ -618,6 +618,18 @@ const styles = StyleSheet.create({
     fontSize: 48,
     marginBottom: 4,
   },
+  loginIconeWrapper: {
+    marginBottom: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loginIconeGradient: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   loginTitulo: {
     fontSize: 22,
     fontWeight: '700',
@@ -755,6 +767,12 @@ const styles = StyleSheet.create({
   },
   cardInfo: {
     flex: 1,
+  },
+  cardRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 4,
   },
   cardNome: {
     fontSize: 15,
