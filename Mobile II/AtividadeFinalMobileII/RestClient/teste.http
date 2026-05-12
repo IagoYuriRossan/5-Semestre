@@ -1,0 +1,42 @@
+### Health Check
+GET http://localhost:3000/health
+
+### Listar todos os usuários
+GET http://localhost:3000/api/usuarios
+
+### Buscar usuário por ID
+GET http://localhost:3000/api/usuarios/6745a1b2c3d4e5f6a7b8c9d0
+
+### Buscar usuário por email
+GET http://localhost:3000/api/usuarios/email/teste@email.com
+
+### Criar novo usuário
+POST http://localhost:3000/api/usuarios
+Content-Type: application/json
+
+{
+  "id": 50,
+  "nome": "Teste REST Client",
+  "email": "restclient@teste.com",
+  "senha": "123456",
+  "telefone": "(11) 98765-4321",
+  "cep": "01310-100",
+  "rua": "Avenida Paulista",
+  "numero": "1000",
+  "bairro": "Bela Vista",
+  "cidade": "São Paulo",
+  "uf": "SP",
+  "dataCadastro": "12/05/2026"
+}
+
+### Atualizar usuário
+PUT http://localhost:3000/api/usuarios/6745a1b2c3d4e5f6a7b8c9d0
+Content-Type: application/json
+
+{
+  "nome": "Teste Atualizado",
+  "telefone": "(11) 99999-9999"
+}
+
+### Deletar usuário
+DELETE http://localhost:3000/api/usuarios/6745a1b2c3d4e5f6a7b8c9d0
