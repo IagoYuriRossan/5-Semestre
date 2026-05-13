@@ -1,101 +1,33 @@
-### Health Check
-GET http://localhost:3001/health
+### Usuários — CRUD para testes
 
-### ─────────────────────────────────────────────────────────────
-### EVENTOS / AUDITORIA (formato atual do backend)
-### ─────────────────────────────────────────────────────────────
+### Listar todos os usuários
+GET http://192.168.7.86:3001/api/usuarios
 
-### LIMPAR TODOS OS EVENTOS (use para testes)
-DELETE http://localhost:3001/api/eventos
-
-### Registrar evento - CADASTRO
-POST http://localhost:3001/api/eventos
+### Criar usuário (não envie `id`; o servidor gera automaticamente)
+POST http://192.168.7.86:3001/api/usuarios
 Content-Type: application/json
 
 {
-  "acao": "cadastro",
-  "userId": 10,
-  "userName": "João Silva",
-  "campos": [
-    { "campo": "nome", "valor": "João Silva" },
-    { "campo": "email", "valor": "joao@email.com" },
-    { "campo": "telefone", "valor": "(11) 98765-4321" }
-  ]
+  "nome": "Gilberto Belço",
+  "email": "gilberto.belco@gmail.com",
+  "telefone": "(11) 90000-0000",
+  "cidade": "Cidade",
+  "uf": "SP",
+  "dataCadastro": "13/05/2026"
 }
 
-### Registrar evento - ALTERACAO
-POST http://localhost:3001/api/eventos
+### Buscar usuário por ID (substitua <ID> pelo userId retornado na criação)
+GET http://192.168.7.86:3001/api/usuarios/101
+
+### Atualizar usuário por ID (envie apenas os campos que quer alterar)
+PUT http://192.168.7.86:3001/api/usuarios/101
 Content-Type: application/json
 
 {
-  "acao": "alteracao",
-  "userId": 10,
-  "userName": "João da Silva Santos",
-  "campos": [
-    { "campo": "nome", "antes": "João Silva", "depois": "João da Silva Santos" },
-    { "campo": "telefone", "antes": "(11) 98765-4321", "depois": "(11) 99999-9999" }
-  ]
+  "nome": "Teste Usuário Atualizado",
+  "telefone": "(11) 91111-1111"
 }
 
-### Registrar evento - EXCLUSAO
-POST http://localhost:3001/api/eventos
-Content-Type: application/json
-
-{
-  "acao": "exclusao",
-  "userId": 11,
-  "userName": "Maria Souza",
-  "campos": [
-    { "campo": "nome", "valor": "Maria Souza" },
-    { "campo": "email", "valor": "maria@email.com" }
-  ]
-}
-
-### Registrar evento - CONSULTA (busca por nome)
-POST http://localhost:3001/api/eventos
-Content-Type: application/json
-
-{
-  "acao": "consulta",
-  "buscadoPor": "nome",
-  "usuarios": [
-    { "userId": 5, "nome": "Ana Souza", "email": "ana.souza@email.com", "telefone": "(11) 98765-4321", "endereco": "Avenida Paulista, 1000 - Bela Vista" }
-  ]
-}
-
-### Listar todos os eventos
-GET http://localhost:3001/api/eventos
-
-### Filtrar por acao (ex: apenas "cadastro")
-GET http://localhost:3001/api/eventos?acao=cadastro
-
-### Paginação
-GET http://localhost:3001/api/eventos?limit=10&skip=0
-
-### Buscar evento por ID
-GET http://localhost:3001/api/eventos/6745a1b2c3d4e5f6a7b8c9d0
-
-### Histórico de um usuário
-GET http://localhost:3001/api/eventos/usuario/1
-
-### Estatísticas de eventos
-GET http://localhost:3001/api/eventos/stats/resumo
-
-### ─────────────────────────────────────────────────────────────
-### SINCRONIZAÇÃO / USUÁRIOS
-### ─────────────────────────────────────────────────────────────
-
-### Sincronizar lista completa de usuários (SQLite -> Mongo)
-POST http://localhost:3001/api/usuarios/sync
-Content-Type: application/json
-
-{
-  "usuarios": [
-    { "id": 1, "nome": "Ana Souza", "email": "ana@email.com", "telefone": "(11) 91111-1111", "cidade": "São Paulo", "uf": "SP", "dataCadastro": "13/05/2026" },
-    { "id": 2, "nome": "Carlos Ferreira", "email": "carlos@email.com", "telefone": "(21) 92222-2222", "cidade": "Rio de Janeiro", "uf": "RJ", "dataCadastro": "13/05/2026" }
-  ]
-}
-
-### Listar usuários copiados no Mongo
-GET http://localhost:3001/api/usuarios
+### Deletar usuário por ID
+DELETE http://192.168.7.86:3001/api/usuarios/101
 
