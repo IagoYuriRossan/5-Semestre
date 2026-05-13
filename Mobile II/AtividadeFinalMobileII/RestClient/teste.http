@@ -1,10 +1,10 @@
 ### Usuários — CRUD para testes
 
 ### Listar todos os usuários
-GET http://192.168.7.86:3001/api/usuarios
+GET http://10.186.42.148:3001/api/usuarios
 
 ### Criar usuário (não envie `id`; o servidor gera automaticamente)
-POST http://192.168.7.86:3001/api/usuarios
+POST http://10.186.42.148:3001/api/usuarios
 Content-Type: application/json
 
 {
@@ -17,10 +17,10 @@ Content-Type: application/json
 }
 
 ### Buscar usuário por ID (substitua <ID> pelo userId retornado na criação)
-GET http://192.168.7.86:3001/api/usuarios/101
+GET http://10.186.42.148:3001/api/usuarios/101
 
 ### Atualizar usuário por ID (envie apenas os campos que quer alterar)
-PUT http://192.168.7.86:3001/api/usuarios/101
+PUT http://10.186.42.148:3001/api/usuarios/101
 Content-Type: application/json
 
 {
@@ -29,5 +29,5 @@ Content-Type: application/json
 }
 
 ### Deletar usuário por ID
-DELETE http://192.168.7.86:3001/api/usuarios/101
+DELETE http://10.186.42.148:3001/api/usuarios/101
 
