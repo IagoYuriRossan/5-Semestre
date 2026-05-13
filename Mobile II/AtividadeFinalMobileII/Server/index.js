@@ -441,6 +441,110 @@ app.get('/api/usuarios', async (req, res) => {
   }
 });
 
+// CRUD direto - Usuários (sem passar pelos eventos)
+// CREATE - criar novo usuário (rejeita se já existir)
+app.post('/api/usuarios', async (req, res) => {
+  try {
+    if (!isMongoConnected) return res.status(503).json({ success: false, error: 'MongoDB disconnected' });
+    const u = req.body || {};
+
+    // Gerar userId automaticamente se não fornecido
+    let userId;
+    if (u.id != null) {
+      userId = Number(u.id);
+      // se o cliente forneceu id e já existe, rejeitar
+      const existing = await db.collection('usuarios').findOne({ userId });
+      if (existing) {
+        return res.status(409).json({ success: false, error: 'Usuário já existe' });
+      }
+    } else {
+      // tentar obter sequência atômica e garantir que não exista conflito
+      let attempts = 0;
+      while (attempts < 5) {
+        const seqDoc = await db.collection('counters').findOneAndUpdate(
+          { _id: 'userid' },
+          { $inc: { seq: 1 } },
+          { upsert: true, returnDocument: 'after' }
+        );
+        const value = seqDoc && seqDoc.value ? seqDoc.value : (await db.collection('counters').findOne({ _id: 'userid' }));
+        userId = Number(value && value.seq ? value.seq : Date.now());
+        const exists = await db.collection('usuarios').findOne({ userId });
+        if (!exists) break;
+        attempts++;
+      }
+      if (!userId) userId = Date.now();
+    }
+
+    const doc = {
+      userId,
+      nome: u.nome ?? '',
+      email: u.email ?? '',
+      telefone: u.telefone ?? '',
+      cidade: u.cidade ?? '',
+      uf: u.uf ?? '',
+      dataCadastro: u.dataCadastro ?? '',
+      _createdAt: new Date(),
+      _updatedAt: new Date()
+    };
+
+    await db.collection('usuarios').insertOne(doc);
+    res.status(201).json({ success: true, data: doc });
+  } catch (err) {
+    console.error('Erro ao criar usuário:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// READ - obter usuário por id (userId)
+app.get('/api/usuarios/:id', async (req, res) => {
+  try {
+    if (!isMongoConnected) return res.status(503).json({ success: false, error: 'MongoDB disconnected' });
+    const userId = Number(req.params.id);
+    const user = await db.collection('usuarios').findOne({ userId });
+    if (!user) return res.status(404).json({ success: false, message: 'Usuário não encontrado' });
+    res.json({ success: true, data: user });
+  } catch (err) {
+    console.error('Erro ao buscar usuário:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// UPDATE - atualizar usuário por id (aplica apenas campos enviados)
+app.put('/api/usuarios/:id', async (req, res) => {
+  try {
+    if (!isMongoConnected) return res.status(503).json({ success: false, error: 'MongoDB disconnected' });
+    const userId = Number(req.params.id);
+    const body = req.body || {};
+    const setObj = {};
+    ['nome','email','telefone','cidade','uf','dataCadastro'].forEach(k => {
+      if (k in body) setObj[k] = body[k];
+    });
+    if (Object.keys(setObj).length === 0) return res.status(400).json({ success: false, error: 'Nenhum campo para atualizar' });
+    setObj._updatedAt = new Date();
+    const result = await db.collection('usuarios').updateOne({ userId }, { $set: setObj });
+    if (result.matchedCount === 0) return res.status(404).json({ success: false, message: 'Usuário não encontrado' });
+    const updated = await db.collection('usuarios').findOne({ userId });
+    res.json({ success: true, data: updated });
+  } catch (err) {
+    console.error('Erro ao atualizar usuário:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// DELETE - remover usuário por id
+app.delete('/api/usuarios/:id', async (req, res) => {
+  try {
+    if (!isMongoConnected) return res.status(503).json({ success: false, error: 'MongoDB disconnected' });
+    const userId = Number(req.params.id);
+    const result = await db.collection('usuarios').deleteOne({ userId });
+    if (result.deletedCount === 0) return res.status(404).json({ success: false, message: 'Usuário não encontrado' });
+    res.json({ success: true, deletedCount: result.deletedCount });
+  } catch (err) {
+    console.error('Erro ao deletar usuário:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // Iniciar servidor
 const server = app.listen(PORT, () => {
   console.log(`🚀 Servidor rodando em http://localhost:${PORT}`);
