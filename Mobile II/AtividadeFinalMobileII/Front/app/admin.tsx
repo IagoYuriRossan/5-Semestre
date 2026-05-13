@@ -81,8 +81,8 @@ function TelaLogin() {
     }
     setCarregando(true);
     // Pequeno delay para feedback visual
-    setTimeout(() => {
-      const ok = loginAdmin(usuario.trim(), senha);
+    setTimeout(async () => {
+      const ok = await loginAdmin(usuario.trim(), senha);
       if (!ok) {
         setErro('Usuário ou senha incorretos.');
       }

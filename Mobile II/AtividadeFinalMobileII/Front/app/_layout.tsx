@@ -2,11 +2,33 @@ import { Ionicons } from '@expo/vector-icons';
 import { DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Tabs } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Colors } from '../src/constants/theme';
 import { AuthProvider } from '../src/context/AuthContext';
+import { mongodbService } from '../src/utils/mongodbService';
+import { obterTodosUsuarios } from '../src/utils/storageService';
+
+/** Verifica conexão com backend e sincroniza usuários locais para MongoDB */
+async function sincronizarAoIniciar() {
+  try {
+    const online = await mongodbService.verificarConexao();
+    if (online) {
+      console.log('🟢 Backend online — sincronizando usuários locais...');
+      const usuarios = await obterTodosUsuarios();
+      await mongodbService.sincronizarUsuarios(usuarios);
+    } else {
+      console.log('🔴 Backend offline — modo local (SQLite)');
+    }
+  } catch (e) {
+    console.warn('Sync inicial falhou:', e);
+  }
+}
 
 export default function RootLayout() {
+  useEffect(() => {
+    sincronizarAoIniciar();
+  }, []);
+
   return (
     <AuthProvider>
       <ThemeProvider value={DefaultTheme}>

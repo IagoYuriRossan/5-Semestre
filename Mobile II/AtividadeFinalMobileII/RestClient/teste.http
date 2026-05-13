@@ -1,42 +1,144 @@
 ### Health Check
-GET http://localhost:3000/health
+GET http://localhost:3001/health
 
-### Listar todos os usuários
-GET http://localhost:3000/api/usuarios
+### ─────────────────────────────────────────────────────────────
+### EVENTOS / AUDITORIA
+### ─────────────────────────────────────────────────────────────
 
-### Buscar usuário por ID
-GET http://localhost:3000/api/usuarios/6745a1b2c3d4e5f6a7b8c9d0
+### LIMPAR TODOS OS EVENTOS (use para testes)
+DELETE http://localhost:3001/api/eventos
 
-### Buscar usuário por email
-GET http://localhost:3000/api/usuarios/email/teste@email.com
-
-### Criar novo usuário
-POST http://localhost:3000/api/usuarios
+### Registrar evento CREATE
+POST http://localhost:3001/api/eventos
 Content-Type: application/json
 
 {
-  "id": 50,
-  "nome": "Teste REST Client",
-  "email": "restclient@teste.com",
-  "senha": "123456",
-  "telefone": "(11) 98765-4321",
-  "cep": "01310-100",
-  "rua": "Avenida Paulista",
-  "numero": "1000",
-  "bairro": "Bela Vista",
-  "cidade": "São Paulo",
-  "uf": "SP",
-  "dataCadastro": "12/05/2026"
+  "eventType": "CREATE",
+  "userId": 1,
+  "userName": "João Silva",
+  "changesAfter": {
+    "email": "joao@email.com",
+    "telefone": "(11) 98765-4321",
+    "cidade": "São Paulo",
+    "uf": "SP"
+  },
+  "metadata": {
+    "dataCadastro": "13/05/2026"
+  }
 }
 
-### Atualizar usuário
-PUT http://localhost:3000/api/usuarios/6745a1b2c3d4e5f6a7b8c9d0
+### Registrar evento UPDATE (com detalhes de campos alterados)
+POST http://localhost:3001/api/eventos
 Content-Type: application/json
 
 {
-  "nome": "Teste Atualizado",
-  "telefone": "(11) 99999-9999"
+  "eventType": "UPDATE",
+  "userId": 1,
+  "userName": "João da Silva Santos",
+  "changesBefore": {
+    "nome": "João Silva",
+    "telefone": "(11) 98765-4321",
+    "endereco": "Rua A, 100 - Centro, São Paulo/SP"
+  },
+  "changesAfter": {
+    "nome": "João da Silva Santos",
+    "telefone": "(11) 99999-9999",
+    "endereco": "Avenida B, 200 - Jardim, São Paulo/SP"
+  },
+  "metadata": {
+    "camposAlterados": ["nome", "telefone", "rua", "numero", "bairro"],
+    "detalhesAlteracao": {
+      "nome": { "antes": "João Silva", "depois": "João da Silva Santos" },
+      "telefone": { "antes": "(11) 98765-4321", "depois": "(11) 99999-9999" },
+      "rua": { "antes": "Rua A", "depois": "Avenida B" },
+      "numero": { "antes": "100", "depois": "200" },
+      "bairro": { "antes": "Centro", "depois": "Jardim" }
+    },
+    "totalAlteracoes": 5
+  }
 }
 
-### Deletar usuário
-DELETE http://localhost:3000/api/usuarios/6745a1b2c3d4e5f6a7b8c9d0
+### Registrar evento DELETE
+POST http://localhost:3001/api/eventos
+Content-Type: application/json
+
+{
+  "eventType": "DELETE",
+  "userId": 1,
+  "userName": "João Silva",
+  "changesBefore": {
+    "email": "joao@email.com",
+    "telefone": "(11) 98765-4321",
+    "cidade": "São Paulo",
+    "uf": "SP"
+  },
+  "metadata": {
+    "motivo": "Solicitado pelo usuário"
+  }
+}
+
+### Registrar evento READ (busca por ID)
+POST http://localhost:3001/api/eventos
+Content-Type: application/json
+
+{
+  "eventType": "READ",
+  "userId": 1,
+  "userName": "João Silva",
+  "metadata": {
+    "tipo": "individual",
+    "quantidade": 1,
+    "ids": [1],
+    "campoBusca": "id"
+  }
+}
+
+### Registrar evento READ (busca por nome)
+POST http://localhost:3001/api/eventos
+Content-Type: application/json
+
+{
+  "eventType": "READ",
+  "userId": 5,
+  "userName": "Busca múltipla",
+  "metadata": {
+    "tipo": "multiplos",
+    "quantidade": 3,
+    "ids": [5, 8, 12],
+    "campoBusca": "nome"
+  }
+}
+
+### Registrar evento READ (busca por email)
+POST http://localhost:3001/api/eventos
+Content-Type: application/json
+
+{
+  "eventType": "READ",
+  "userId": 1,
+  "userName": "João Silva",
+  "metadata": {
+    "tipo": "individual",
+    "quantidade": 1,
+    "ids": [1],
+    "campoBusca": "email"
+  }
+}
+
+### Listar todos os eventos
+GET http://localhost:3001/api/eventos
+
+### Listar eventos com filtro (apenas CREATE)
+GET http://localhost:3001/api/eventos?eventType=CREATE
+
+### Listar eventos com paginação
+GET http://localhost:3001/api/eventos?limit=10&skip=0
+
+### Buscar evento por ID
+GET http://localhost:3001/api/eventos/6745a1b2c3d4e5f6a7b8c9d0
+
+### Buscar histórico de um usuário específico
+GET http://localhost:3001/api/eventos/usuario/1
+
+### Obter estatísticas de eventos
+GET http://localhost:3001/api/eventos/stats/resumo

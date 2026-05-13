@@ -1,0 +1,202 @@
+### ========================================
+### API DE EVENTOS - SISTEMA DE AUDITORIA
+### ========================================
+
+### Health Check
+GET http://localhost:3001/health
+
+### ----------------------------------------
+### CADASTRO - Registrar criação de usuário
+### ----------------------------------------
+POST http://localhost:3001/api/eventos
+Content-Type: application/json
+
+{
+  "acao": "cadastro",
+  "userId": 1,
+  "userName": "João Silva",
+  "campos": [
+    { "campo": "nome", "valor": "João Silva" },
+    { "campo": "email", "valor": "joao@email.com" },
+    { "campo": "telefone", "valor": "(11) 98765-4321" },
+    { "campo": "cep", "valor": "01310-100" },
+    { "campo": "rua", "valor": "Avenida Paulista" },
+    { "campo": "numero", "valor": "1000" },
+    { "campo": "bairro", "valor": "Bela Vista" },
+    { "campo": "cidade", "valor": "São Paulo" },
+    { "campo": "uf", "valor": "SP" }
+  ]
+}
+
+### ----------------------------------------
+### ALTERAÇÃO - Registrar atualização de usuário
+### ----------------------------------------
+POST http://localhost:3001/api/eventos
+Content-Type: application/json
+
+{
+  "acao": "alteracao",
+  "userId": 1,
+  "userName": "João da Silva Santos",
+  "campos": [
+    {
+      "campo": "nome",
+      "antes": "João Silva",
+      "depois": "João da Silva Santos"
+    },
+    {
+      "campo": "telefone",
+      "antes": "(11) 98765-4321",
+      "depois": "(11) 99999-9999"
+    },
+    {
+      "campo": "rua",
+      "antes": "Avenida Paulista",
+      "depois": "Rua Augusta"
+    },
+    {
+      "campo": "numero",
+      "antes": "1000",
+      "depois": "500"
+    }
+  ]
+}
+
+### ----------------------------------------
+### EXCLUSÃO - Registrar remoção de usuário
+### ----------------------------------------
+POST http://localhost:3001/api/eventos
+Content-Type: application/json
+
+{
+  "acao": "exclusao",
+  "userId": 1,
+  "userName": "João Silva",
+  "campos": [
+    { "campo": "nome", "valor": "João Silva" },
+    { "campo": "email", "valor": "joao@email.com" },
+    { "campo": "telefone", "valor": "(11) 98765-4321" },
+    { "campo": "cep", "valor": "01310-100" },
+    { "campo": "rua", "valor": "Avenida Paulista" },
+    { "campo": "numero", "valor": "1000" },
+    { "campo": "bairro", "valor": "Bela Vista" },
+    { "campo": "cidade", "valor": "São Paulo" },
+    { "campo": "uf", "valor": "SP" }
+  ]
+}
+
+### ----------------------------------------
+### CONSULTA - Busca por ID
+### ----------------------------------------
+POST http://localhost:3001/api/eventos
+Content-Type: application/json
+
+{
+  "acao": "consulta",
+  "buscadoPor": "id",
+  "usuarios": [
+    {
+      "userId": 1,
+      "nome": "João Silva",
+      "email": "joao@email.com",
+      "telefone": "(11) 98765-4321",
+      "endereco": "Avenida Paulista, 1000 - Bela Vista, São Paulo/SP"
+    }
+  ]
+}
+
+### ----------------------------------------
+### CONSULTA - Busca por nome (múltiplos)
+### ----------------------------------------
+POST http://localhost:3001/api/eventos
+Content-Type: application/json
+
+{
+  "acao": "consulta",
+  "buscadoPor": "nome",
+  "usuarios": [
+    {
+      "userId": 5,
+      "nome": "João Silva",
+      "email": "joao@email.com",
+      "telefone": "(11) 98765-4321",
+      "endereco": "Rua A, 100 - Centro, São Paulo/SP"
+    },
+    {
+      "userId": 8,
+      "nome": "João Pedro",
+      "email": "joaop@email.com",
+      "telefone": "(11) 91234-5678",
+      "endereco": "Rua B, 200 - Vila Maria, São Paulo/SP"
+    },
+    {
+      "userId": 12,
+      "nome": "João Carlos",
+      "email": "joaoc@email.com",
+      "telefone": "(11) 95555-6666",
+      "endereco": "Av. C, 300 - Jardim, São Paulo/SP"
+    }
+  ]
+}
+
+### ----------------------------------------
+### CONSULTA - Busca por email
+### ----------------------------------------
+POST http://localhost:3001/api/eventos
+Content-Type: application/json
+
+{
+  "acao": "consulta",
+  "buscadoPor": "email",
+  "usuarios": [
+    {
+      "userId": 3,
+      "nome": "Maria Santos",
+      "email": "maria@email.com",
+      "telefone": "(11) 97777-8888",
+      "endereco": "Rua das Flores, 50 - Centro, São Paulo/SP"
+    }
+  ]
+}
+
+### ========================================
+### LISTAR E FILTRAR EVENTOS
+### ========================================
+
+### Listar todos os eventos
+GET http://localhost:3001/api/eventos
+
+### Listar eventos com paginação
+GET http://localhost:3001/api/eventos?limit=10&skip=0
+
+### Filtrar por ação (cadastro)
+GET http://localhost:3001/api/eventos?acao=cadastro
+
+### Filtrar por ação (alteracao)
+GET http://localhost:3001/api/eventos?acao=alteracao
+
+### Filtrar por ação (exclusao)
+GET http://localhost:3001/api/eventos?acao=exclusao
+
+### Filtrar por ação (consulta)
+GET http://localhost:3001/api/eventos?acao=consulta
+
+### Filtrar por usuário
+GET http://localhost:3001/api/eventos?userId=1
+
+### ========================================
+### CONSULTAS ESPECÍFICAS
+### ========================================
+
+### Histórico de um usuário específico
+GET http://localhost:3001/api/eventos/usuario/1
+
+### Estatísticas gerais
+GET http://localhost:3001/api/eventos/stats/resumo
+
+### ========================================
+### ADMINISTRAÇÃO
+### ========================================
+
+### Limpar todos os eventos (útil para testes)
+DELETE http://localhost:3001/api/eventos

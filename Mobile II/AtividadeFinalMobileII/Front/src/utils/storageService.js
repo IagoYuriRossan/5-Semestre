@@ -1,41 +1,6 @@
 import { getDatabase } from './database';
 import { mongodbService } from './mongodbService';
 
-// ─── Funções auxiliares para sincronização ────────────────────
-
-// Sincronizar usuário com MongoDB (busca por email e atualiza ou cria)
-async function sincronizarUsuarioMongoDB(usuario) {
-  try {
-    // Buscar todos os usuários do MongoDB
-    const usuariosMongo = await mongodbService.obterTodosUsuarios();
-    const usuarioExistente = usuariosMongo.find(u => u.email === usuario.email);
-    
-    if (usuarioExistente) {
-      // Atualizar
-      await mongodbService.atualizarUsuario(usuarioExistente._id, usuario);
-    } else {
-      // Criar novo
-      await mongodbService.salvarUsuario(usuario);
-    }
-  } catch (error) {
-    console.warn('Erro ao sincronizar com MongoDB:', error);
-  }
-}
-
-// Deletar usuário do MongoDB por email
-async function deletarUsuarioMongoDB(email) {
-  try {
-    const usuariosMongo = await mongodbService.obterTodosUsuarios();
-    const usuario = usuariosMongo.find(u => u.email === email);
-    
-    if (usuario) {
-      await mongodbService.deletarUsuario(usuario._id);
-    }
-  } catch (error) {
-    console.warn('Erro ao deletar do MongoDB:', error);
-  }
-}
-
 // ─── Funções principais ────────────────────────────────────────
 
 export const salvarUsuario = async (usuario) => {
@@ -63,24 +28,86 @@ export const salvarUsuario = async (usuario) => {
 
   const usuarioCompleto = { id: result.lastInsertRowId, ...usuario, dataCadastro };
 
-  // Salvar simultaneamente no MongoDB (não bloqueia se falhar)
-  mongodbService.salvarUsuario(usuarioCompleto).catch(console.warn);
+  // Registrar evento CREATE no MongoDB (apenas se backend online)
+  if (mongodbService.estaOnline()) {
+    mongodbService.registrarCriacao(usuarioCompleto).catch(console.warn);
+  }
 
   return usuarioCompleto;
 };
 
 export const obterTodosUsuarios = async () => {
   const db = await getDatabase();
-  return await db.getAllAsync('SELECT * FROM usuarios ORDER BY rowid DESC');
+  const usuarios = await db.getAllAsync('SELECT * FROM usuarios ORDER BY rowid DESC');
+  
+  // NÃO registrar evento READ ao listar todos (apenas em buscas específicas)
+  
+  return usuarios;
 };
 
 export const obterUsuarioPorId = async (id) => {
   const db = await getDatabase();
-  return await db.getFirstAsync('SELECT * FROM usuarios WHERE id = ?', [id]);
+  const usuario = await db.getFirstAsync('SELECT * FROM usuarios WHERE id = ?', [id]);
+  
+  // Registrar evento READ apenas se o usuário existir e backend online
+  if (usuario && mongodbService.estaOnline()) {
+    mongodbService.registrarConsulta([usuario], 'id').catch(console.warn);
+  }
+  
+  return usuario;
+};
+
+// Nova função: buscar usuário com filtro (nome, email, etc.)
+export const buscarUsuarios = async (filtro) => {
+  const db = await getDatabase();
+  let query = 'SELECT * FROM usuarios WHERE 1=1';
+  const params = [];
+  let camposBuscados = [];
+
+  if (filtro.nome) {
+    query += ' AND nome LIKE ?';
+    params.push(`%${filtro.nome}%`);
+    camposBuscados.push('nome');
+  }
+  
+  if (filtro.email) {
+    query += ' AND email LIKE ?';
+    params.push(`%${filtro.email}%`);
+    camposBuscados.push('email');
+  }
+  
+  if (filtro.telefone) {
+    query += ' AND telefone LIKE ?';
+    params.push(`%${filtro.telefone}%`);
+    camposBuscados.push('telefone');
+  }
+  
+  if (filtro.cidade) {
+    query += ' AND cidade LIKE ?';
+    params.push(`%${filtro.cidade}%`);
+    camposBuscados.push('cidade');
+  }
+
+  query += ' ORDER BY rowid DESC';
+  
+  const usuarios = await db.getAllAsync(query, params);
+  
+  // Registrar evento READ com metadados da busca (apenas se backend online)
+  if (usuarios.length > 0 && mongodbService.estaOnline()) {
+    mongodbService.registrarConsulta(
+      usuarios,
+      camposBuscados.join(', ')
+    ).catch(console.warn);
+  }
+  
+  return usuarios;
 };
 
 export const atualizarUsuario = async (id, dados) => {
   const db = await getDatabase();
+  
+  // Buscar usuário ANTES da atualização para registrar mudanças
+  const usuarioAntes = await db.getFirstAsync('SELECT * FROM usuarios WHERE id = ?', [id]);
   
   // Atualizar no SQLite
   await db.runAsync(
@@ -100,27 +127,27 @@ export const atualizarUsuario = async (id, dados) => {
     ]
   );
 
-  // Buscar usuário atualizado para sincronizar com MongoDB
-  const usuarioAtualizado = await db.getFirstAsync('SELECT * FROM usuarios WHERE id = ?', [id]);
+  // Buscar usuário DEPOIS da atualização
+  const usuarioDepois = await db.getFirstAsync('SELECT * FROM usuarios WHERE id = ?', [id]);
   
-  // Sincronizar com MongoDB (busca por email e atualiza)
-  if (usuarioAtualizado) {
-    sincronizarUsuarioMongoDB(usuarioAtualizado).catch(console.warn);
+  // Registrar evento UPDATE no MongoDB (apenas se backend online)
+  if (usuarioAntes && usuarioDepois && mongodbService.estaOnline()) {
+    mongodbService.registrarAtualizacao(usuarioAntes, usuarioDepois).catch(console.warn);
   }
 };
 
 export const deletarUsuario = async (id) => {
   const db = await getDatabase();
   
-  // Buscar usuário antes de deletar para sincronizar com MongoDB
+  // Buscar usuário antes de deletar para registrar no MongoDB
   const usuario = await db.getFirstAsync('SELECT * FROM usuarios WHERE id = ?', [id]);
   
   // Deletar do SQLite
   await db.runAsync('DELETE FROM usuarios WHERE id = ?', [id]);
   
-  // Deletar do MongoDB (busca por email)
-  if (usuario && usuario.email) {
-    deletarUsuarioMongoDB(usuario.email).catch(console.warn);
+  // Registrar evento DELETE no MongoDB (apenas se backend online)
+  if (usuario && mongodbService.estaOnline()) {
+    mongodbService.registrarExclusao(usuario).catch(console.warn);
   }
 };
 
@@ -152,5 +179,35 @@ export const popularBancoDados = async () => {
         [u.nome, u.email, u.senha, u.telefone, u.cep, u.rua, u.numero, u.bairro, u.cidade, u.uf, dataCadastro]
       );
     }
+  }
+};
+
+// Sincronizar todos os usuários locais (SQLite) para o backend/MongoDB
+export const sincronizarUsuariosParaMongo = async () => {
+  try {
+    const usuarios = await obterTodosUsuarios();
+    for (const u of usuarios) {
+      const usuarioCompleto = {
+        id: u.id,
+        nome: u.nome,
+        email: u.email,
+        senha: u.senha,
+        telefone: u.telefone,
+        cep: u.cep,
+        rua: u.rua,
+        numero: u.numero,
+        bairro: u.bairro,
+        cidade: u.cidade,
+        uf: u.uf,
+        dataCadastro: u.dataCadastro
+      };
+
+      // Registrar evento de criação no sistema de auditoria (o servidor fará o upsert em `usuarios`)
+      await mongodbService.registrarCriacao(usuarioCompleto).catch(err => console.warn('Erro sync user:', err.message || err));
+    }
+    return { success: true, count: usuarios.length };
+  } catch (error) {
+    console.warn('Erro ao sincronizar usuários para Mongo:', error.message || error);
+    return { success: false, error: error.message || String(error) };
   }
 };
