@@ -2,143 +2,100 @@
 GET http://localhost:3001/health
 
 ### ─────────────────────────────────────────────────────────────
-### EVENTOS / AUDITORIA
+### EVENTOS / AUDITORIA (formato atual do backend)
 ### ─────────────────────────────────────────────────────────────
 
 ### LIMPAR TODOS OS EVENTOS (use para testes)
 DELETE http://localhost:3001/api/eventos
 
-### Registrar evento CREATE
+### Registrar evento - CADASTRO
 POST http://localhost:3001/api/eventos
 Content-Type: application/json
 
 {
-  "eventType": "CREATE",
-  "userId": 1,
+  "acao": "cadastro",
+  "userId": 10,
   "userName": "João Silva",
-  "changesAfter": {
-    "email": "joao@email.com",
-    "telefone": "(11) 98765-4321",
-    "cidade": "São Paulo",
-    "uf": "SP"
-  },
-  "metadata": {
-    "dataCadastro": "13/05/2026"
-  }
+  "campos": [
+    { "campo": "nome", "valor": "João Silva" },
+    { "campo": "email", "valor": "joao@email.com" },
+    { "campo": "telefone", "valor": "(11) 98765-4321" }
+  ]
 }
 
-### Registrar evento UPDATE (com detalhes de campos alterados)
+### Registrar evento - ALTERACAO
 POST http://localhost:3001/api/eventos
 Content-Type: application/json
 
 {
-  "eventType": "UPDATE",
-  "userId": 1,
+  "acao": "alteracao",
+  "userId": 10,
   "userName": "João da Silva Santos",
-  "changesBefore": {
-    "nome": "João Silva",
-    "telefone": "(11) 98765-4321",
-    "endereco": "Rua A, 100 - Centro, São Paulo/SP"
-  },
-  "changesAfter": {
-    "nome": "João da Silva Santos",
-    "telefone": "(11) 99999-9999",
-    "endereco": "Avenida B, 200 - Jardim, São Paulo/SP"
-  },
-  "metadata": {
-    "camposAlterados": ["nome", "telefone", "rua", "numero", "bairro"],
-    "detalhesAlteracao": {
-      "nome": { "antes": "João Silva", "depois": "João da Silva Santos" },
-      "telefone": { "antes": "(11) 98765-4321", "depois": "(11) 99999-9999" },
-      "rua": { "antes": "Rua A", "depois": "Avenida B" },
-      "numero": { "antes": "100", "depois": "200" },
-      "bairro": { "antes": "Centro", "depois": "Jardim" }
-    },
-    "totalAlteracoes": 5
-  }
+  "campos": [
+    { "campo": "nome", "antes": "João Silva", "depois": "João da Silva Santos" },
+    { "campo": "telefone", "antes": "(11) 98765-4321", "depois": "(11) 99999-9999" }
+  ]
 }
 
-### Registrar evento DELETE
+### Registrar evento - EXCLUSAO
 POST http://localhost:3001/api/eventos
 Content-Type: application/json
 
 {
-  "eventType": "DELETE",
-  "userId": 1,
-  "userName": "João Silva",
-  "changesBefore": {
-    "email": "joao@email.com",
-    "telefone": "(11) 98765-4321",
-    "cidade": "São Paulo",
-    "uf": "SP"
-  },
-  "metadata": {
-    "motivo": "Solicitado pelo usuário"
-  }
+  "acao": "exclusao",
+  "userId": 11,
+  "userName": "Maria Souza",
+  "campos": [
+    { "campo": "nome", "valor": "Maria Souza" },
+    { "campo": "email", "valor": "maria@email.com" }
+  ]
 }
 
-### Registrar evento READ (busca por ID)
+### Registrar evento - CONSULTA (busca por nome)
 POST http://localhost:3001/api/eventos
 Content-Type: application/json
 
 {
-  "eventType": "READ",
-  "userId": 1,
-  "userName": "João Silva",
-  "metadata": {
-    "tipo": "individual",
-    "quantidade": 1,
-    "ids": [1],
-    "campoBusca": "id"
-  }
-}
-
-### Registrar evento READ (busca por nome)
-POST http://localhost:3001/api/eventos
-Content-Type: application/json
-
-{
-  "eventType": "READ",
-  "userId": 5,
-  "userName": "Busca múltipla",
-  "metadata": {
-    "tipo": "multiplos",
-    "quantidade": 3,
-    "ids": [5, 8, 12],
-    "campoBusca": "nome"
-  }
-}
-
-### Registrar evento READ (busca por email)
-POST http://localhost:3001/api/eventos
-Content-Type: application/json
-
-{
-  "eventType": "READ",
-  "userId": 1,
-  "userName": "João Silva",
-  "metadata": {
-    "tipo": "individual",
-    "quantidade": 1,
-    "ids": [1],
-    "campoBusca": "email"
-  }
+  "acao": "consulta",
+  "buscadoPor": "nome",
+  "usuarios": [
+    { "userId": 5, "nome": "Ana Souza", "email": "ana.souza@email.com", "telefone": "(11) 98765-4321", "endereco": "Avenida Paulista, 1000 - Bela Vista" }
+  ]
 }
 
 ### Listar todos os eventos
 GET http://localhost:3001/api/eventos
 
-### Listar eventos com filtro (apenas CREATE)
-GET http://localhost:3001/api/eventos?eventType=CREATE
+### Filtrar por acao (ex: apenas "cadastro")
+GET http://localhost:3001/api/eventos?acao=cadastro
 
-### Listar eventos com paginação
+### Paginação
 GET http://localhost:3001/api/eventos?limit=10&skip=0
 
 ### Buscar evento por ID
 GET http://localhost:3001/api/eventos/6745a1b2c3d4e5f6a7b8c9d0
 
-### Buscar histórico de um usuário específico
+### Histórico de um usuário
 GET http://localhost:3001/api/eventos/usuario/1
 
-### Obter estatísticas de eventos
+### Estatísticas de eventos
 GET http://localhost:3001/api/eventos/stats/resumo
+
+### ─────────────────────────────────────────────────────────────
+### SINCRONIZAÇÃO / USUÁRIOS
+### ─────────────────────────────────────────────────────────────
+
+### Sincronizar lista completa de usuários (SQLite -> Mongo)
+POST http://localhost:3001/api/usuarios/sync
+Content-Type: application/json
+
+{
+  "usuarios": [
+    { "id": 1, "nome": "Ana Souza", "email": "ana@email.com", "telefone": "(11) 91111-1111", "cidade": "São Paulo", "uf": "SP", "dataCadastro": "13/05/2026" },
+    { "id": 2, "nome": "Carlos Ferreira", "email": "carlos@email.com", "telefone": "(21) 92222-2222", "cidade": "Rio de Janeiro", "uf": "RJ", "dataCadastro": "13/05/2026" }
+  ]
+}
+
+### Listar usuários copiados no Mongo
+GET http://localhost:3001/api/usuarios
+
