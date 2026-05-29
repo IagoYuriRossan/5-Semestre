@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "MeuApp",
-    "slug": "MeuApp",
+    "name": "AtividadeFinalMobileII",
+    "slug": "AtividadeFinalMobileII",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "meuapp",
+    "scheme": "atividadefinalmobilell",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -20,7 +20,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.MeuApp"
+      "package": "com.anonymous.AtividadeFinalMobileII"
     },
     "web": {
       "output": "static",

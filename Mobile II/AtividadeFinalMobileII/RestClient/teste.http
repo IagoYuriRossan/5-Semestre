@@ -1,0 +1,33 @@
+### Usuários — CRUD para testes
+
+### Listar todos os usuários
+GET http://10.186.42.148:3001/api/usuarios
+
+### Criar usuário (não envie `id`; o servidor gera automaticamente)
+POST http://10.186.42.148:3001/api/usuarios
+Content-Type: application/json
+
+{
+  "nome": "Gilberto Belço",
+  "email": "gilberto.belco@gmail.com",
+  "telefone": "(11) 90000-0000",
+  "cidade": "Cidade",
+  "uf": "SP",
+  "dataCadastro": "13/05/2026"
+}
+
+### Buscar usuário por ID (substitua <ID> pelo userId retornado na criação)
+GET http://10.186.42.148:3001/api/usuarios/101
+
+### Atualizar usuário por ID (envie apenas os campos que quer alterar)
+PUT http://10.186.42.148:3001/api/usuarios/101
+Content-Type: application/json
+
+{
+  "nome": "Teste Usuário Atualizado",
+  "telefone": "(11) 91111-1111"
+}
+
+### Deletar usuário por ID
+DELETE http://10.186.42.148:3001/api/usuarios/101
+
